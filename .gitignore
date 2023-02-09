@@ -1,3 +1,8 @@
+
+#eclipse
+.cproject
+.project
+
 # Prerequisites
 *.d
 
@@ -30,3 +35,25 @@
 *.exe
 *.out
 *.app
+*.x86
+*.x64
+*.arm
+
+#Eclipse setting
+.settings
+
+#Visual Studio Code setting
+.metadata/
+.vscode
+.settings
+
+#gdb debugger
+.gdb_history
+.gdb_*
+
+#direcory
+CMakeFiles
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+
