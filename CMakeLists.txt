@@ -3,7 +3,7 @@
 # Copyrights (C) 2023
 
 #------------------------------------------------------------------------------------------
-#                                cmake settings
+#                                CMAKE settings
 #------------------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.22.1)
 
@@ -42,6 +42,8 @@ set(VIDEO_CREEK_INCLUDE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+include_directories(${PROJECT_NAME} PRIVATE  ${VIDEO_CREEK_INCLUDE})
+
 #------------------------------------------------------------------------------------------
 #                                VideoCreek source directory
 #------------------------------------------------------------------------------------------
@@ -54,6 +56,8 @@ set(VIDEO_CREEK_SRC_DIR
 #------------------------------------------------------------------------------------------
 set(VIDEO_CREEK_SRC
     ${VIDEO_CREEK_SRC_DIR}/main.cpp
+    ${VIDEO_CREEK_SRC_DIR}/CmdArguments.cpp
+    ${VIDEO_CREEK_SRC_DIR}/CmdArgumentsParser.cpp
 )
 
 #------------------------------------------------------------------------------------------
