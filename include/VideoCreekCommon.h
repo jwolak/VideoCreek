@@ -1,5 +1,5 @@
 /*
- * CmdArgumentsParser.h
+ * VideoCreekCommon.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,32 +37,20 @@
  *
  */
 
-#ifndef INCLUDE_CMDARGUMENTSPARSER_H_
-#define INCLUDE_CMDARGUMENTSPARSER_H_
+#ifndef INCLUDE_VIDEOCREEKCOMMON_H_
+#define INCLUDE_VIDEOCREEKCOMMON_H_
 
-#include <memory>
+#include <cstdint>
 
-#include "CmdArguments.h"
+#include "Mode.h"
 
 namespace video_creek
 {
 
-class CmdArgumentsParser
-{
- public:
-  CmdArgumentsParser(std::shared_ptr<CmdArguments> cmdArguments)
-  : mCmdArguments_ { cmdArguments }
-  {
-  }
+const Mode kDefaultMode = Mode::RECEIVER;
+const int32_t kDefaultPort = 1025;
+const std::string kDefaultDstAddress = "127.0.0.1";
 
-  void parseArgs(int argc, char **argv);
+} /*namespace video_creek*/
 
- private:
-  std::shared_ptr<CmdArguments> mCmdArguments_;
-
-  void printHelp();
-};
-
-}
-
-#endif /* INCLUDE_CMDARGUMENTSPARSER_H_ */
+#endif /* INCLUDE_VIDEOCREEKCOMMON_H_ */

@@ -58,6 +58,7 @@ set(VIDEO_CREEK_SRC
     ${VIDEO_CREEK_SRC_DIR}/main.cpp
     ${VIDEO_CREEK_SRC_DIR}/CmdArguments.cpp
     ${VIDEO_CREEK_SRC_DIR}/CmdArgumentsParser.cpp
+    ${VIDEO_CREEK_SRC_DIR}/VideoCreek.cpp
 )
 
 #------------------------------------------------------------------------------------------

@@ -40,6 +40,12 @@
 #ifndef INCLUDE_CMDARGUMENTS_H_
 #define INCLUDE_CMDARGUMENTS_H_
 
+#include <string>
+#include <cstdint>
+
+#include "Mode.h"
+#include "VideoCreekCommon.h"
+
 namespace video_creek
 {
 
@@ -47,10 +53,23 @@ class CmdArguments
 {
  public:
   CmdArguments()
+  : mMode_ { kDefaultMode }
+  , mPort_ { kDefaultPort }
+  , mDstAddress_ { kDefaultDstAddress }
   {
-
   }
 
+  void setMode(Mode modeToSet);
+  Mode getMode();
+  void setPort(int32_t portToSet);
+  int32_t getPort();
+  void setDstAddress(const std::string &addressToSet);
+  std::string getDstAddress();
+
+ private:
+  Mode mMode_;
+  int32_t mPort_;
+  std::string mDstAddress_;
 };
 
 } /*namespace video_creek*/

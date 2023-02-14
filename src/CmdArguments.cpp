@@ -39,3 +39,36 @@
 
 #include "CmdArguments.h"
 #include "EquinoxLogger.h"
+
+void video_creek::CmdArguments::setMode(video_creek::Mode modeToSet)
+{
+  equinox::trace("[CmdArguments] Mode is set to: [%s]", modeToSet == video_creek::Mode::RECEIVER ? "Receiver" : "Sender");
+  mMode_ = modeToSet;
+}
+
+video_creek::Mode video_creek::CmdArguments::getMode()
+{
+  return mMode_;
+}
+
+void video_creek::CmdArguments::setPort(int32_t portToSet)
+{
+  equinox::trace("[CmdArguments] Port set to: [%d]", portToSet);
+  mPort_ = portToSet;
+}
+
+int32_t video_creek::CmdArguments::getPort()
+{
+  return mPort_;
+}
+
+void video_creek::CmdArguments::setDstAddress(const std::string &addressToSet)
+{
+  equinox::trace("[CmdArguments] Destination address set to: [%s]", addressToSet);
+  mDstAddress_ = addressToSet;
+}
+
+std::string video_creek::CmdArguments::getDstAddress()
+{
+  return mDstAddress_;
+}

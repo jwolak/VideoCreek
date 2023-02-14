@@ -37,12 +37,24 @@
  *
  */
 
-#include "EquinoxLogger.h"
+#include <memory>
 
-int main(void)
+#include "EquinoxLogger.h"
+#include "CmdArguments.h"
+#include "CmdArgumentsParser.h"
+#include "VideoCreek.h"
+
+int main(int argc, char **argv)
 {
   equinox::setup(equinox::level::LOG_LEVEL::trace, std::string("VideoCreek"), equinox::logs_output::SINK::console);
   equinox::trace("%s", "test");
+
+  std::shared_ptr<video_creek::CmdArguments> cmdArguments = std::make_shared<video_creek::CmdArguments>();
+  video_creek::CmdArgumentsParser cmdArgumentsParser( cmdArguments );
+  cmdArgumentsParser.parseArgs(argc, argv);
+
+  video_creek::VideoCreek video_creek(cmdArguments);
+  video_creek.start();
 
   return 0;
 }

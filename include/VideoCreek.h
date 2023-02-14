@@ -1,5 +1,5 @@
 /*
- * CmdArgumentsParser.h
+ * VideoCreek.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,8 +37,8 @@
  *
  */
 
-#ifndef INCLUDE_CMDARGUMENTSPARSER_H_
-#define INCLUDE_CMDARGUMENTSPARSER_H_
+#ifndef INCLUDE_VIDEOCREEK_H_
+#define INCLUDE_VIDEOCREEK_H_
 
 #include <memory>
 
@@ -47,22 +47,21 @@
 namespace video_creek
 {
 
-class CmdArgumentsParser
+class VideoCreek
 {
  public:
-  CmdArgumentsParser(std::shared_ptr<CmdArguments> cmdArguments)
+  VideoCreek(std::shared_ptr<CmdArguments> cmdArguments)
   : mCmdArguments_ { cmdArguments }
   {
   }
 
-  void parseArgs(int argc, char **argv);
+  void start();
 
  private:
   std::shared_ptr<CmdArguments> mCmdArguments_;
 
-  void printHelp();
 };
 
-}
+} /*namespace video_creek*/
 
-#endif /* INCLUDE_CMDARGUMENTSPARSER_H_ */
+#endif /* INCLUDE_VIDEOCREEK_H_ */
