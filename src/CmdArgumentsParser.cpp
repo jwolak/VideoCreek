@@ -73,7 +73,7 @@ void video_creek::CmdArgumentsParser::printHelp()
       "\n"
       "\t#Limitations:\n"
       "\t Port range        for [--port]  is: 1 - 65535\n"
-      "\t Debug logs        for [--debug] is: [f] to log into a file, [c] to console or [b] to both\n"
+      "\t Debug logs        for [--debug] is: 0 - 5 (trace, debug, info, warning, error, critical) \n"
       "\n"
       "\t#Examples of client and server set:\n"
       "\t Sender:     VideoCreeks -r -p 2024 -a 127.0.0.1\n"
@@ -98,10 +98,10 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
 {
   int flag = 0;
   int32_t portno = 0;
+  int32_t logLevel = 0;
   char address_parameter[INET_ADDRSTRLEN] = {};
 
   if (argc < MIN_NUMBER_OF_ARGUMENTS) {
-
     std::cout << "[CmdArgumentsParser] No arguments" << std::endl;
     this->printHelp();
     exit(1);
@@ -119,7 +119,8 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
   std::cout << std::endl;
 
   while ((flag = getopt_long(argc, argv, "hsrp:a:d:", longopts, NULL)) != -1) {
-    switch (flag) {
+    switch (flag)
+    {
       case 's':
         mCmdArguments_->setMode(Mode::SENDER);
         std::cout << "[CmdArgumentsParser] Set role to sender" << std::endl;
@@ -142,34 +143,41 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
         break;
 
       case 'd':
-        SET_LOG_LEVEL(equinox_logger::LogLevelType::LOG_LEVEL_DEBUG);
-        LOG_DEBUG("%s", "[ParseArguments] Debug mode is enabled");
-        LOG_WARNING("%s", "Debug mode enabled");
+          equinox::setup(equinox::level::LOG_LEVEL::trace, std::string("VideoCreek"), equinox::logs_output::SINK::console_and_file, std::string("video_creek.log"));
+          logLevel = atoi(optarg);
+          switch(logLevel)
+          {
+            case 0:
+              equinox::changeLevel(equinox::level::LOG_LEVEL::trace);
+              equinox::trace("Trace log level mode enabled");
+              break;
 
-        if (strncmp(optarg, "f", 2) == 0) {
-          SET_LOG_LOGGER_OUTPUT(equinox_logger::LogOutputType::FILE_LOG);
-          LOG_DEBUG("%s", "[ParseArguments] Debug logs to file enabled");
+            case 1:
+              equinox::changeLevel(equinox::level::LOG_LEVEL::debug);
+              equinox::debug("Debug log level mode enabled");
+              break;
+
+            case 2:
+              equinox::changeLevel(equinox::level::LOG_LEVEL::info);
+              equinox::info("Info log level mode enabled");
+              break;
+
+            case 3:
+              equinox::changeLevel(equinox::level::LOG_LEVEL::warning);
+              equinox::warning("Warning log level mode enabled");
+              break;
+
+            case 4:
+              equinox::changeLevel(equinox::level::LOG_LEVEL::error);
+              equinox::error("Error log level mode enabled");
+              break;
+
+            case 5:
+              equinox::changeLevel(equinox::level::LOG_LEVEL::critical);
+              equinox::critical("Critical log level mode enabled");
+              break;
+          }
           break;
-        }
-
-        if (strncmp(optarg, "c", 2) == 0) {
-          SET_LOG_LOGGER_OUTPUT(equinox_logger::LogOutputType::CONSOLE);
-          LOG_DEBUG("%s", "[ParseArguments] Debug logs to console enabled");
-          break;
-        }
-
-        if (strncmp(optarg, "b", 2) == 0) {
-          SET_LOG_LOGGER_OUTPUT(equinox_logger::LogOutputType::FILE_AND_CONSOLE);
-          LOG_DEBUG("%s", "[ParseArguments] Debug logs to file and console enabled");
-          break;
-
-        } else {
-
-          LOG_DEBUG("%s", "[ParseArguments] Invalid debug output direction parameter provided");
-          LOG_ERROR("%s", "Invalid debug output direction parameter provided");
-          return false;
-        }
-        break;
 
       case 'h':
       default:
