@@ -1,5 +1,5 @@
 /*
- * VideoCreekCommon.h
+ * IVideoCreekInstance.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,22 +37,19 @@
  *
  */
 
-#ifndef INCLUDE_VIDEOCREEKCOMMON_H_
-#define INCLUDE_VIDEOCREEKCOMMON_H_
+#ifndef INCLUDE_VIDEOCREEKINSTANCEFACTORY_IVIDEOCREEKINSTANCE_H_
+#define INCLUDE_VIDEOCREEKINSTANCEFACTORY_IVIDEOCREEKINSTANCE_H_
 
-#include <cstdint>
-
-#include "Mode.h"
+#include <memory>
 
 namespace video_creek
 {
-
-const Mode kDefaultMode = Mode::RECEIVER;
-const int32_t kDefaultPort = 1025;
-const std::string kDefaultDstAddress = std::string("127.0.0.1");
-const std::string kLogPrefix = std::string("VideoCreek");
-const std::string kLogFileName = std::string("video_creek.log");
-
+class IVideoCreekInstance
+{
+ public:
+  virtual ~IVideoCreekInstance() = default;
+  virtual void start() = 0;
+};
 } /*namespace video_creek*/
 
-#endif /* INCLUDE_VIDEOCREEKCOMMON_H_ */
+#endif /* INCLUDE_VIDEOCREEKINSTANCEFACTORY_IVIDEOCREEKINSTANCE_H_ */

@@ -1,5 +1,5 @@
 /*
- * VideoCreekCommon.h
+ * SenderInstance.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,22 +37,18 @@
  *
  */
 
-#ifndef INCLUDE_VIDEOCREEKCOMMON_H_
-#define INCLUDE_VIDEOCREEKCOMMON_H_
+#ifndef INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_
+#define INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_
 
-#include <cstdint>
-
-#include "Mode.h"
+#include "IVideoCreekInstance.h"
 
 namespace video_creek
 {
-
-const Mode kDefaultMode = Mode::RECEIVER;
-const int32_t kDefaultPort = 1025;
-const std::string kDefaultDstAddress = std::string("127.0.0.1");
-const std::string kLogPrefix = std::string("VideoCreek");
-const std::string kLogFileName = std::string("video_creek.log");
-
+class SenderInstance : public IVideoCreekInstance
+{
+ public:
+  void start() override;
+};
 } /*namespace video_creek*/
 
-#endif /* INCLUDE_VIDEOCREEKCOMMON_H_ */
+#endif /* INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_ */

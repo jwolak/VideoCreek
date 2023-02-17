@@ -143,7 +143,7 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
         break;
 
       case 'd':
-          equinox::setup(equinox::level::LOG_LEVEL::trace, std::string("VideoCreek"), equinox::logs_output::SINK::console_and_file, std::string("video_creek.log"));
+          equinox::setup(equinox::level::LOG_LEVEL::trace, kLogPrefix, equinox::logs_output::SINK::console_and_file, kLogFileName);
           logLevel = atoi(optarg);
           switch(logLevel)
           {

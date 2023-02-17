@@ -42,7 +42,12 @@ set(VIDEO_CREEK_INCLUDE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+set(VIDEO_CREEK_INCLUDE_INSTANCE_FACTORY
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/VideoCreekInstanceFactory
+)
+
 include_directories(${PROJECT_NAME} PRIVATE  ${VIDEO_CREEK_INCLUDE})
+include_directories(${PROJECT_NAME} PRIVATE  ${VIDEO_CREEK_INCLUDE_INSTANCE_FACTORY})
 
 #------------------------------------------------------------------------------------------
 #                                VideoCreek source directory
@@ -59,6 +64,9 @@ set(VIDEO_CREEK_SRC
     ${VIDEO_CREEK_SRC_DIR}/CmdArguments.cpp
     ${VIDEO_CREEK_SRC_DIR}/CmdArgumentsParser.cpp
     ${VIDEO_CREEK_SRC_DIR}/VideoCreek.cpp
+    ${VIDEO_CREEK_SRC_DIR}/VideoCreekInstanceFactory/ReceiverInstance.cpp
+    ${VIDEO_CREEK_SRC_DIR}/VideoCreekInstanceFactory/SenderInstance.cpp
+    ${VIDEO_CREEK_SRC_DIR}/VideoCreekInstanceFactory/ReceiverInstanceFactory.cpp
 )
 
 #------------------------------------------------------------------------------------------
