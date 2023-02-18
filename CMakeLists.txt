@@ -69,6 +69,8 @@ set(VIDEO_CREEK_SRC
     ${VIDEO_CREEK_SRC_DIR}/VideoCreekInstanceFactory/ReceiverInstanceFactory.cpp
     ${VIDEO_CREEK_SRC_DIR}/VideoCreekInstanceFactory/SenderInstanceFactory.cpp
     ${VIDEO_CREEK_SRC_DIR}/VideoCreekInstanceFactory/VideoCreekInstanceFactory.cpp
+    ${VIDEO_CREEK_SRC_DIR}/CameraHandler.cpp
+    ${VIDEO_CREEK_SRC_DIR}/CompressionHandler.cpp
 )
 
 #------------------------------------------------------------------------------------------

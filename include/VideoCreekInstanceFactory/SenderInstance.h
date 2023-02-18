@@ -40,14 +40,28 @@
 #ifndef INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_
 #define INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_
 
+#include <memory>
+
 #include "IVideoCreekInstance.h"
+#include "CameraHandler.h"
+#include "CompressionHandler.h"
 
 namespace video_creek
 {
 class SenderInstance : public IVideoCreekInstance
 {
  public:
+  SenderInstance()
+  : mCameraHandler_ { std::make_shared<CameraHandler>() }
+  , mCompressionHandler_ { std::make_shared<CompressionHandler>() }
+  {
+  }
+
   bool start() override;
+
+ private:
+  std::shared_ptr<CameraHandler> mCameraHandler_;
+  std::shared_ptr<CompressionHandler> mCompressionHandler_;
 };
 } /*namespace video_creek*/
 

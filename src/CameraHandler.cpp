@@ -1,5 +1,5 @@
 /*
- * SenderInstance.cpp
+ * CameraHandler.cpp
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,9 +37,4 @@
  *
  */
 
-#include "SenderInstance.h"
-
-bool video_creek::SenderInstance::start()
-{
-  return true;
-}
+#include "CameraHandler.h"

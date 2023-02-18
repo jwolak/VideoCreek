@@ -1,5 +1,5 @@
 /*
- * SenderInstance.cpp
+ * CameraHandler.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,9 +37,21 @@
  *
  */
 
-#include "SenderInstance.h"
+#ifndef INCLUDE_CAMERAHANDLER_H_
+#define INCLUDE_CAMERAHANDLER_H_
 
-bool video_creek::SenderInstance::start()
+#include <memory>
+
+namespace video_creek
 {
-  return true;
-}
+class CameraHandler
+{
+  public:
+  CameraHandler()
+  {
+  }
+
+};
+} /*namespace video_creek*/
+
+#endif /* INCLUDE_CAMERAHANDLER_H_ */

@@ -1,5 +1,5 @@
 /*
- * SenderInstance.cpp
+ * CompressionHandler.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,9 +37,19 @@
  *
  */
 
-#include "SenderInstance.h"
+#ifndef INCLUDE_COMPRESSIONHANDLER_H_
+#define INCLUDE_COMPRESSIONHANDLER_H_
 
-bool video_creek::SenderInstance::start()
+namespace video_creek
 {
-  return true;
-}
+class CompressionHandler
+{
+ public:
+  CompressionHandler()
+  {
+  }
+
+};
+} /*namespace video_creek*/
+
+#endif /* INCLUDE_COMPRESSIONHANDLER_H_ */
