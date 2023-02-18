@@ -72,3 +72,14 @@ std::string video_creek::CmdArguments::getDstAddress()
 {
   return mDstAddress_;
 }
+
+void video_creek::CmdArguments::setCompressionRatio(int32_t compresRatioToSet)
+{
+  equinox::trace("[CmdArguments] Compression ratio set to: [%d]", compresRatioToSet);
+  nCompressionRatio_ = compresRatioToSet;
+}
+
+int32_t video_creek::CmdArguments::getCompressionRatio()
+{
+  return nCompressionRatio_;
+}

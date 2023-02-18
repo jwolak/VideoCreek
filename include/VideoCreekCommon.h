@@ -52,6 +52,7 @@ const int32_t kDefaultPort = 1025;
 const std::string kDefaultDstAddress = std::string("127.0.0.1");
 const std::string kLogPrefix = std::string("VideoCreek");
 const std::string kLogFileName = std::string("video_creek.log");
+const int32_t kDefaultCompressionRatio = 80; /*[%]*/
 
 } /*namespace video_creek*/
 

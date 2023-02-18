@@ -53,11 +53,10 @@ bool video_creek::VideoCreek::start()
 
   if (!mVideoCreekInstance_->start())
   {
-    equinox::debug("%s", "[VideoCreek] Failed to run instance");
+    equinox::debug("%s", "[VideoCreek] Failed to start instance");
     return false;
   }
 
-  equinox::debug("%s", "[VideoCreek] Run instance successfully");
+  equinox::debug("%s", "[VideoCreek] Started the instance successfully");
   return true;
 }
-

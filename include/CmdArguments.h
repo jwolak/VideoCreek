@@ -56,6 +56,7 @@ class CmdArguments
   : mMode_ { kDefaultMode }
   , mPort_ { kDefaultPort }
   , mDstAddress_ { kDefaultDstAddress }
+  , nCompressionRatio_ { kDefaultCompressionRatio }
   {
   }
 
@@ -65,11 +66,14 @@ class CmdArguments
   int32_t getPort();
   void setDstAddress(const std::string &addressToSet);
   std::string getDstAddress();
+  void setCompressionRatio(int32_t compresRatioToSet);
+  int32_t getCompressionRatio();
 
  private:
   Mode mMode_;
   int32_t mPort_;
   std::string mDstAddress_;
+  int32_t nCompressionRatio_;
 };
 
 } /*namespace video_creek*/

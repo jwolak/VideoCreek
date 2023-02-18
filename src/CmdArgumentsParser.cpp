@@ -69,6 +69,7 @@ void video_creek::CmdArgumentsParser::printHelp()
       "\t [--sender]    or [-s] enable sender mode\n"
       "\t [--port]      or [-p] port number\n"
       "\t [--address]   or [-a] server IP address\n"
+      "\t [--compress]  or [-c] video compression ratio in [%]\n"
       "\t [--debug]     or [-d] debug logs level\n"
       "\n"
       "\t#Limitations:\n"
@@ -76,7 +77,7 @@ void video_creek::CmdArgumentsParser::printHelp()
       "\t Debug logs        for [--debug] is: 0 - 5 (trace, debug, info, warning, error, critical) \n"
       "\n"
       "\t#Examples of client and server set:\n"
-      "\t Sender:     VideoCreeks -r -p 2024 -a 127.0.0.1\n"
+      "\t Sender:     VideoCreeks -r -p 2024 -a 127.0.0.1 -c 80\n"
       "\t Receiver:   VideoCreeks -s -p 2024\n"
       "\n"
       "\t Sender:     VideoCreeks --sender   --port 1024  --address 127.0.0.1\n"
@@ -99,6 +100,7 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
   int flag = 0;
   int32_t portno = 0;
   int32_t logLevel = 0;
+  int32_t compressRatio = 0;
   char address_parameter[INET_ADDRSTRLEN] = {};
 
   if (argc < MIN_NUMBER_OF_ARGUMENTS) {
@@ -113,12 +115,13 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
       {"receiver",  no_argument,        NULL,  'r'},
       {"port",      required_argument,  NULL,  'p'},
       {"address",   required_argument,  NULL,  'a'},
+      {"compress",  required_argument,  NULL,  'c'},
       {"debug",     required_argument,  NULL,  'd'},
   };
 
   std::cout << std::endl;
 
-  while ((flag = getopt_long(argc, argv, "hsrp:a:d:", longopts, NULL)) != -1) {
+  while ((flag = getopt_long(argc, argv, "hsrp:a:c:d:", longopts, NULL)) != -1) {
     switch (flag)
     {
       case 's':
@@ -132,7 +135,7 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
         break;
 
       case 'p':
-        portno = atoi(optarg);
+        portno = atoi(optarg); /* Validate */
         mCmdArguments_->setPort(portno);
         std::cout << "[CmdArgumentsParser] Port set to: " << portno << std::endl;
         break;
@@ -142,8 +145,14 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
         mCmdArguments_->setDstAddress(std::string(address_parameter));
         break;
 
+      case 'c':
+        compressRatio = atoi(optarg); /* TODO Validate to 100% */
+        mCmdArguments_->setCompressionRatio(compressRatio);
+        std::cout << "[CmdArgumentsParser] Compression ration set to: " << compressRatio << " [%]" << std::endl;
+        break;
+
       case 'd':
-          equinox::setup(equinox::level::LOG_LEVEL::trace, kLogPrefix, equinox::logs_output::SINK::console_and_file, kLogFileName);
+          equinox::setup(equinox::level::LOG_LEVEL::critical, kLogPrefix, equinox::logs_output::SINK::console_and_file, kLogFileName);
           logLevel = atoi(optarg);
           switch(logLevel)
           {
@@ -175,6 +184,10 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
             case 5:
               equinox::changeLevel(equinox::level::LOG_LEVEL::critical);
               equinox::critical("Critical log level mode enabled");
+              break;
+
+            default:
+              equinox::critical("Unknown level provided. Critical log level mode enabled");
               break;
           }
           break;
