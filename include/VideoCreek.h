@@ -43,6 +43,7 @@
 #include <memory>
 
 #include "CmdArguments.h"
+#include "VideoCreekInstanceFactory.h"
 
 namespace video_creek
 {
@@ -52,14 +53,17 @@ class VideoCreek
  public:
   VideoCreek(std::shared_ptr<CmdArguments> cmdArguments)
   : mCmdArguments_ { cmdArguments }
+  , mIVideoCreekInstanceFactory_ { std::make_unique<VideoCreekInstanceFactory>(mCmdArguments_) }
+  , mVideoCreekInstance_ { nullptr }
   {
   }
 
-  void start();
+  bool start();
 
  private:
   std::shared_ptr<CmdArguments> mCmdArguments_;
-
+  std::unique_ptr<VideoCreekInstanceFactory> mIVideoCreekInstanceFactory_;
+  std::unique_ptr<IVideoCreekInstance> mVideoCreekInstance_;
 };
 
 } /*namespace video_creek*/

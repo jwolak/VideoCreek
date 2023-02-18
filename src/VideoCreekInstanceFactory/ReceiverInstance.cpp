@@ -40,7 +40,7 @@
 #include "ReceiverInstance.h"
 
 
-void video_creek::ReceiverInstance::start()
+bool video_creek::ReceiverInstance::start()
 {
-
+  return true;
 }

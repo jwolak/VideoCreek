@@ -39,7 +39,7 @@
 
 #include "SenderInstance.h"
 
-void video_creek::SenderInstance::start()
+bool video_creek::SenderInstance::start()
 {
 
 }

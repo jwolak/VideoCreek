@@ -47,7 +47,7 @@ namespace video_creek
 class SenderInstance : public IVideoCreekInstance
 {
  public:
-  void start() override;
+  bool start() override;
 };
 } /*namespace video_creek*/
 

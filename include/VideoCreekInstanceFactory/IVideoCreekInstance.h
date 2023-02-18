@@ -48,7 +48,7 @@ class IVideoCreekInstance
 {
  public:
   virtual ~IVideoCreekInstance() = default;
-  virtual void start() = 0;
+  virtual bool start() = 0;
 };
 } /*namespace video_creek*/
 

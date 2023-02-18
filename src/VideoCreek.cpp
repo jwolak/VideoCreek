@@ -38,9 +38,26 @@
  */
 
 #include "VideoCreek.h"
+#include "EquinoxLogger.h"
 
-void video_creek::VideoCreek::start()
+bool video_creek::VideoCreek::start()
 {
+  if ((mVideoCreekInstance_ = mIVideoCreekInstanceFactory_->MakeInstance()) == nullptr)
+  {
+    equinox::error("%s%s", "[VideoCreek] Make instance with mode: ", static_cast<bool>(mCmdArguments_->getMode()) ? "sender" : "receiver");
+    return false;
+  } else
+  {
+    equinox::debug("%s", "[VideoCreeks] Created Video Creeks instance successfully");
+  }
 
+  if (!mVideoCreekInstance_->start())
+  {
+    equinox::debug("%s", "[VideoCreek] Failed to run instance");
+    return false;
+  }
+
+  equinox::debug("%s", "[VideoCreek] Run instance successfully");
+  return true;
 }
 
