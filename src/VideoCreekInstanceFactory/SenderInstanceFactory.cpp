@@ -1,5 +1,5 @@
 /*
- * main.cpp
+ * SenderInstanceFactory.cpp
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,28 +37,9 @@
  *
  */
 
-#include <memory>
-#include <iostream>
+#include "SenderInstanceFactory.h"
 
-#include "CmdArguments.h"
-#include "CmdArgumentsParser.h"
-#include "VideoCreek.h"
-
-int main(int argc, char **argv)
+std::unique_ptr<video_creek::IVideoCreekInstance> video_creek::SenderInstanceFactory::Create() const
 {
-  std::shared_ptr<video_creek::CmdArguments> cmdArguments = std::make_shared<video_creek::CmdArguments>();
-  video_creek::CmdArgumentsParser cmdArgumentsParser( cmdArguments );
-  cmdArgumentsParser.parseArgs(argc, argv);
-
-  video_creek::VideoCreek video_creek(cmdArguments);
-
-  if (!video_creek.start())
-  {
-    std::cout << "[Main] Failed to start VideoCreek" << std::endl;
-    exit(1);
-  }
-
-  return 0;
+  return std::make_unique<video_creek::SenderInstance>();
 }
-
-

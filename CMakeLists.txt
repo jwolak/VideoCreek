@@ -3,7 +3,7 @@
 # Copyrights (C) 2023
 
 #------------------------------------------------------------------------------------------
-#                                cmake settings
+#                                CMAKE settings
 #------------------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.22.1)
 
@@ -42,6 +42,13 @@ set(VIDEO_CREEK_INCLUDE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+set(VIDEO_CREEK_INCLUDE_INSTANCE_FACTORY
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/VideoCreekInstanceFactory
+)
+
+include_directories(${PROJECT_NAME} PRIVATE  ${VIDEO_CREEK_INCLUDE})
+include_directories(${PROJECT_NAME} PRIVATE  ${VIDEO_CREEK_INCLUDE_INSTANCE_FACTORY})
+
 #------------------------------------------------------------------------------------------
 #                                VideoCreek source directory
 #------------------------------------------------------------------------------------------
@@ -54,6 +61,14 @@ set(VIDEO_CREEK_SRC_DIR
 #------------------------------------------------------------------------------------------
 set(VIDEO_CREEK_SRC
     ${VIDEO_CREEK_SRC_DIR}/main.cpp
+    ${VIDEO_CREEK_SRC_DIR}/CmdArguments.cpp
+    ${VIDEO_CREEK_SRC_DIR}/CmdArgumentsParser.cpp
+    ${VIDEO_CREEK_SRC_DIR}/VideoCreek.cpp
+    ${VIDEO_CREEK_SRC_DIR}/VideoCreekInstanceFactory/ReceiverInstance.cpp
+    ${VIDEO_CREEK_SRC_DIR}/VideoCreekInstanceFactory/SenderInstance.cpp
+    ${VIDEO_CREEK_SRC_DIR}/VideoCreekInstanceFactory/ReceiverInstanceFactory.cpp
+    ${VIDEO_CREEK_SRC_DIR}/VideoCreekInstanceFactory/SenderInstanceFactory.cpp
+    ${VIDEO_CREEK_SRC_DIR}/VideoCreekInstanceFactory/VideoCreekInstanceFactory.cpp
 )
 
 #------------------------------------------------------------------------------------------

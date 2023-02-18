@@ -1,5 +1,5 @@
 /*
- * main.cpp
+ * VideoCreekInstanceFactory.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,28 +37,35 @@
  *
  */
 
+#ifndef INCLUDE_VIDEOCREEKINSTANCEFACTORY_VIDEOCREEKINSTANCEFACTORY_H_
+#define INCLUDE_VIDEOCREEKINSTANCEFACTORY_VIDEOCREEKINSTANCEFACTORY_H_
+
+#include <map>
+#include <string>
 #include <memory>
-#include <iostream>
 
 #include "CmdArguments.h"
-#include "CmdArgumentsParser.h"
-#include "VideoCreek.h"
+#include "VideoCreekInstanceFactory.h"
+#include "ReceiverInstanceFactory.h"
+#include "SenderInstanceFactory.h"
+#include "Mode.h"
 
-int main(int argc, char **argv)
+namespace video_creek
 {
-  std::shared_ptr<video_creek::CmdArguments> cmdArguments = std::make_shared<video_creek::CmdArguments>();
-  video_creek::CmdArgumentsParser cmdArgumentsParser( cmdArguments );
-  cmdArgumentsParser.parseArgs(argc, argv);
-
-  video_creek::VideoCreek video_creek(cmdArguments);
-
-  if (!video_creek.start())
+class VideoCreekInstanceFactory
+{
+ public:
+  VideoCreekInstanceFactory(std::shared_ptr<CmdArguments> cmdArguments)
+  : mCmdArguments_ { cmdArguments }
   {
-    std::cout << "[Main] Failed to start VideoCreek" << std::endl;
-    exit(1);
   }
 
-  return 0;
-}
+  std::unique_ptr<IVideoCreekInstance> MakeInstance();
 
+ private:
+  std::shared_ptr<CmdArguments> mCmdArguments_;
+  std::map<Mode, std::unique_ptr<IVideoCreekInstanceFactory>> mVideoCreekFactories_;
+};
+} /*namespace video_creek*/
 
+#endif /* INCLUDE_VIDEOCREEKINSTANCEFACTORY_VIDEOCREEKINSTANCEFACTORY_H_ */

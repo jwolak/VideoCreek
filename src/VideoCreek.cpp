@@ -1,5 +1,5 @@
 /*
- * main.cpp
+ * VideoCreek.cpp
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,28 +37,26 @@
  *
  */
 
-#include <memory>
-#include <iostream>
-
-#include "CmdArguments.h"
-#include "CmdArgumentsParser.h"
 #include "VideoCreek.h"
+#include "EquinoxLogger.h"
 
-int main(int argc, char **argv)
+bool video_creek::VideoCreek::start()
 {
-  std::shared_ptr<video_creek::CmdArguments> cmdArguments = std::make_shared<video_creek::CmdArguments>();
-  video_creek::CmdArgumentsParser cmdArgumentsParser( cmdArguments );
-  cmdArgumentsParser.parseArgs(argc, argv);
-
-  video_creek::VideoCreek video_creek(cmdArguments);
-
-  if (!video_creek.start())
+  if ((mVideoCreekInstance_ = mIVideoCreekInstanceFactory_->MakeInstance()) == nullptr)
   {
-    std::cout << "[Main] Failed to start VideoCreek" << std::endl;
-    exit(1);
+    equinox::error("%s%s", "[VideoCreek] Make instance with mode: ", static_cast<bool>(mCmdArguments_->getMode()) ? "sender" : "receiver");
+    return false;
+  } else
+  {
+    equinox::debug("%s", "[VideoCreeks] Created Video Creeks instance successfully");
   }
 
-  return 0;
+  if (!mVideoCreekInstance_->start())
+  {
+    equinox::debug("%s", "[VideoCreek] Failed to start instance");
+    return false;
+  }
+
+  equinox::debug("%s", "[VideoCreek] Started the instance successfully");
+  return true;
 }
-
-

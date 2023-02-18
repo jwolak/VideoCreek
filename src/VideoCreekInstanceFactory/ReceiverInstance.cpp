@@ -1,5 +1,5 @@
 /*
- * main.cpp
+ * ReceiverInstance.cpp
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,28 +37,10 @@
  *
  */
 
-#include <memory>
-#include <iostream>
+#include "ReceiverInstance.h"
 
-#include "CmdArguments.h"
-#include "CmdArgumentsParser.h"
-#include "VideoCreek.h"
 
-int main(int argc, char **argv)
+bool video_creek::ReceiverInstance::start()
 {
-  std::shared_ptr<video_creek::CmdArguments> cmdArguments = std::make_shared<video_creek::CmdArguments>();
-  video_creek::CmdArgumentsParser cmdArgumentsParser( cmdArguments );
-  cmdArgumentsParser.parseArgs(argc, argv);
-
-  video_creek::VideoCreek video_creek(cmdArguments);
-
-  if (!video_creek.start())
-  {
-    std::cout << "[Main] Failed to start VideoCreek" << std::endl;
-    exit(1);
-  }
-
-  return 0;
+  return true;
 }
-
-

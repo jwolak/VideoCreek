@@ -1,5 +1,5 @@
 /*
- * main.cpp
+ * IVideoCreekInstanceFactory.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,28 +37,22 @@
  *
  */
 
+#ifndef INCLUDE_VIDEOCREEKINSTANCEFACTORY_IVIDEOCREEKINSTANCEFACTORY_H_
+#define INCLUDE_VIDEOCREEKINSTANCEFACTORY_IVIDEOCREEKINSTANCEFACTORY_H_
+
+#include "IVideoCreekInstance.h"
+
 #include <memory>
-#include <iostream>
 
-#include "CmdArguments.h"
-#include "CmdArgumentsParser.h"
-#include "VideoCreek.h"
+namespace video_creek {
 
-int main(int argc, char **argv)
-{
-  std::shared_ptr<video_creek::CmdArguments> cmdArguments = std::make_shared<video_creek::CmdArguments>();
-  video_creek::CmdArgumentsParser cmdArgumentsParser( cmdArguments );
-  cmdArgumentsParser.parseArgs(argc, argv);
+class IVideoCreekInstanceFactory {
+ public:
+  virtual ~IVideoCreekInstanceFactory() = default;
+  virtual std::unique_ptr<IVideoCreekInstance> Create() const = 0;
+};
 
-  video_creek::VideoCreek video_creek(cmdArguments);
-
-  if (!video_creek.start())
-  {
-    std::cout << "[Main] Failed to start VideoCreek" << std::endl;
-    exit(1);
-  }
-
-  return 0;
-}
+} /*namespace video_creek */
 
 
+#endif /* INCLUDE_VIDEOCREEKINSTANCEFACTORY_IVIDEOCREEKINSTANCEFACTORY_H_ */

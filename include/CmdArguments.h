@@ -1,5 +1,5 @@
 /*
- * main.cpp
+ * CmdArguments.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,28 +37,45 @@
  *
  */
 
-#include <memory>
-#include <iostream>
+#ifndef INCLUDE_CMDARGUMENTS_H_
+#define INCLUDE_CMDARGUMENTS_H_
 
-#include "CmdArguments.h"
-#include "CmdArgumentsParser.h"
-#include "VideoCreek.h"
+#include <string>
+#include <cstdint>
 
-int main(int argc, char **argv)
+#include "Mode.h"
+#include "VideoCreekCommon.h"
+
+namespace video_creek
 {
-  std::shared_ptr<video_creek::CmdArguments> cmdArguments = std::make_shared<video_creek::CmdArguments>();
-  video_creek::CmdArgumentsParser cmdArgumentsParser( cmdArguments );
-  cmdArgumentsParser.parseArgs(argc, argv);
 
-  video_creek::VideoCreek video_creek(cmdArguments);
-
-  if (!video_creek.start())
+class CmdArguments
+{
+ public:
+  CmdArguments()
+  : mMode_ { kDefaultMode }
+  , mPort_ { kDefaultPort }
+  , mDstAddress_ { kDefaultDstAddress }
+  , nCompressionRatio_ { kDefaultCompressionRatio }
   {
-    std::cout << "[Main] Failed to start VideoCreek" << std::endl;
-    exit(1);
   }
 
-  return 0;
-}
+  void setMode(Mode modeToSet);
+  Mode getMode();
+  void setPort(int32_t portToSet);
+  int32_t getPort();
+  void setDstAddress(const std::string &addressToSet);
+  std::string getDstAddress();
+  void setCompressionRatio(int32_t compresRatioToSet);
+  int32_t getCompressionRatio();
 
+ private:
+  Mode mMode_;
+  int32_t mPort_;
+  std::string mDstAddress_;
+  int32_t nCompressionRatio_;
+};
 
+} /*namespace video_creek*/
+
+#endif /* INCLUDE_CMDARGUMENTS_H_ */

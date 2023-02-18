@@ -1,5 +1,5 @@
 /*
- * main.cpp
+ * VideoCreekCommon.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,28 +37,23 @@
  *
  */
 
-#include <memory>
-#include <iostream>
+#ifndef INCLUDE_VIDEOCREEKCOMMON_H_
+#define INCLUDE_VIDEOCREEKCOMMON_H_
 
-#include "CmdArguments.h"
-#include "CmdArgumentsParser.h"
-#include "VideoCreek.h"
+#include <cstdint>
 
-int main(int argc, char **argv)
+#include "Mode.h"
+
+namespace video_creek
 {
-  std::shared_ptr<video_creek::CmdArguments> cmdArguments = std::make_shared<video_creek::CmdArguments>();
-  video_creek::CmdArgumentsParser cmdArgumentsParser( cmdArguments );
-  cmdArgumentsParser.parseArgs(argc, argv);
 
-  video_creek::VideoCreek video_creek(cmdArguments);
+const Mode kDefaultMode = Mode::RECEIVER;
+const int32_t kDefaultPort = 1025;
+const std::string kDefaultDstAddress = std::string("127.0.0.1");
+const std::string kLogPrefix = std::string("VideoCreek");
+const std::string kLogFileName = std::string("video_creek.log");
+const int32_t kDefaultCompressionRatio = 80; /*[%]*/
 
-  if (!video_creek.start())
-  {
-    std::cout << "[Main] Failed to start VideoCreek" << std::endl;
-    exit(1);
-  }
+} /*namespace video_creek*/
 
-  return 0;
-}
-
-
+#endif /* INCLUDE_VIDEOCREEKCOMMON_H_ */

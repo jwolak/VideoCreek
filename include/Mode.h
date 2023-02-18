@@ -1,5 +1,5 @@
 /*
- * main.cpp
+ * Mode.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,28 +37,17 @@
  *
  */
 
-#include <memory>
-#include <iostream>
+#ifndef INCLUDE_MODE_H_
+#define INCLUDE_MODE_H_
 
-#include "CmdArguments.h"
-#include "CmdArgumentsParser.h"
-#include "VideoCreek.h"
-
-int main(int argc, char **argv)
+namespace video_creek
 {
-  std::shared_ptr<video_creek::CmdArguments> cmdArguments = std::make_shared<video_creek::CmdArguments>();
-  video_creek::CmdArgumentsParser cmdArgumentsParser( cmdArguments );
-  cmdArgumentsParser.parseArgs(argc, argv);
 
-  video_creek::VideoCreek video_creek(cmdArguments);
+enum class Mode {
+  RECEIVER = 0,
+  SENDER   = 1,
+};
 
-  if (!video_creek.start())
-  {
-    std::cout << "[Main] Failed to start VideoCreek" << std::endl;
-    exit(1);
-  }
+} /*namespace video_creek*/
 
-  return 0;
-}
-
-
+#endif /* INCLUDE_MODE_H_ */

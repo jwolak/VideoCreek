@@ -1,5 +1,5 @@
 /*
- * main.cpp
+ * ReceiverInstanceFactory.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,28 +37,26 @@
  *
  */
 
+#ifndef INCLUDE_VIDEOCREEKINSTANCEFACTORY_RECEIVERINSTANCEFACTORY_H_
+#define INCLUDE_VIDEOCREEKINSTANCEFACTORY_RECEIVERINSTANCEFACTORY_H_
+
 #include <memory>
-#include <iostream>
 
-#include "CmdArguments.h"
-#include "CmdArgumentsParser.h"
-#include "VideoCreek.h"
+#include "IVideoCreekInstanceFactory.h"
+#include "ReceiverInstance.h"
 
-int main(int argc, char **argv)
+namespace video_creek
 {
-  std::shared_ptr<video_creek::CmdArguments> cmdArguments = std::make_shared<video_creek::CmdArguments>();
-  video_creek::CmdArgumentsParser cmdArgumentsParser( cmdArguments );
-  cmdArgumentsParser.parseArgs(argc, argv);
-
-  video_creek::VideoCreek video_creek(cmdArguments);
-
-  if (!video_creek.start())
+class ReceiverInstanceFactory : public IVideoCreekInstanceFactory
+{
+ public:
+  ReceiverInstanceFactory()
   {
-    std::cout << "[Main] Failed to start VideoCreek" << std::endl;
-    exit(1);
   }
 
-  return 0;
-}
+  std::unique_ptr<IVideoCreekInstance> Create() const override;
 
+};
+} /*namespace video_creek*/
 
+#endif /* INCLUDE_VIDEOCREEKINSTANCEFACTORY_RECEIVERINSTANCEFACTORY_H_ */

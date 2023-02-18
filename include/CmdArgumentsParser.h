@@ -1,5 +1,5 @@
 /*
- * main.cpp
+ * CmdArgumentsParser.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,28 +37,32 @@
  *
  */
 
+#ifndef INCLUDE_CMDARGUMENTSPARSER_H_
+#define INCLUDE_CMDARGUMENTSPARSER_H_
+
 #include <memory>
-#include <iostream>
 
 #include "CmdArguments.h"
-#include "CmdArgumentsParser.h"
-#include "VideoCreek.h"
 
-int main(int argc, char **argv)
+namespace video_creek
 {
-  std::shared_ptr<video_creek::CmdArguments> cmdArguments = std::make_shared<video_creek::CmdArguments>();
-  video_creek::CmdArgumentsParser cmdArgumentsParser( cmdArguments );
-  cmdArgumentsParser.parseArgs(argc, argv);
 
-  video_creek::VideoCreek video_creek(cmdArguments);
-
-  if (!video_creek.start())
+class CmdArgumentsParser
+{
+ public:
+  CmdArgumentsParser(std::shared_ptr<CmdArguments> cmdArguments)
+  : mCmdArguments_ { cmdArguments }
   {
-    std::cout << "[Main] Failed to start VideoCreek" << std::endl;
-    exit(1);
   }
 
-  return 0;
+  void parseArgs(int argc, char **argv);
+
+ private:
+  std::shared_ptr<CmdArguments> mCmdArguments_;
+
+  void printHelp();
+};
+
 }
 
-
+#endif /* INCLUDE_CMDARGUMENTSPARSER_H_ */
