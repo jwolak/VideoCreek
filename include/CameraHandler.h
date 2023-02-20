@@ -42,14 +42,20 @@
 
 #include <memory>
 
+#include <opencv2/core/mat.hpp>
+
 namespace video_creek
 {
 class CameraHandler
 {
-  public:
-  CameraHandler()
+ public:
+  CameraHandler(std::shared_ptr<cv::Mat> imageBuffer)
+  : imageBuffer_ { imageBuffer }
   {
   }
+
+ private:
+  std::shared_ptr<cv::Mat> imageBuffer_;
 
 };
 } /*namespace video_creek*/

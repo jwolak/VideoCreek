@@ -1,5 +1,5 @@
 /*
- * SenderInstance.h
+ * UdpStreamer.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,42 +37,18 @@
  *
  */
 
-#ifndef INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_
-#define INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_
-
-#include <memory>
-#include <vector>
-
-#include <opencv2/core/mat.hpp>
-
-#include "IVideoCreekInstance.h"
-#include "CameraHandler.h"
-#include "CompressionHandler.h"
-#include "UdpStreamer.h"
+#ifndef INCLUDE_UDPSTREAMER_H_
+#define INCLUDE_UDPSTREAMER_H_
 
 namespace video_creek
 {
-class SenderInstance : public IVideoCreekInstance
+class UdpStreamer
 {
  public:
-  SenderInstance()
-  : mImageBuffer_ { std::make_shared<cv::Mat>() }
-  , mEncodedVideoBuffer_ {}
-  , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_) }
-  , mCompressionHandler_ { std::make_shared<CompressionHandler>() }
-  , mUdpStreamer_ { std::make_shared<UdpStreamer>() }
+  UdpStreamer()
   {
   }
-
-  bool start() override;
-
- private:
-  std::shared_ptr<cv::Mat> mImageBuffer_;
-  std::vector<uint8_t> mEncodedVideoBuffer_;
-  std::shared_ptr<CameraHandler> mCameraHandler_;
-  std::shared_ptr<CompressionHandler> mCompressionHandler_;
-  std::shared_ptr<UdpStreamer> mUdpStreamer_;
 };
 } /*namespace video_creek*/
 
-#endif /* INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_ */
+#endif /* INCLUDE_UDPSTREAMER_H_ */
