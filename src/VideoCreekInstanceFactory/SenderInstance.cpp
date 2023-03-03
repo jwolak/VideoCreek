@@ -38,8 +38,50 @@
  */
 
 #include "SenderInstance.h"
+#include "EquinoxLogger.h"
+
+video_creek::SenderInstance::~SenderInstance()
+{
+  if(nullptr != mFramesGrabberThread_)
+  {
+    mFramesGrabberThread_->join();
+  }
+}
 
 bool video_creek::SenderInstance::start()
 {
+  if(!mCameraHandler_->openCam())
+  {
+    equinox::error("%s", "[SenderInstance] Open camera device failed");
+    return false;
+  }
+  equinox::trace("%s", "[SenderInstance] Open camera device successful");
+
+  if(!mUdpStreamer_->setup())
+  {
+    equinox::error("%s", "[SenderInstance] Setup UDP streamer failed");
+    return false;
+  }
+  equinox::error("%s", "[SenderInstance] Setup UDP streamer successful");
+
+  if(nullptr == (mFramesGrabberThread_ = std::make_shared<std::thread>(&SenderInstance::runSender, this)))
+  {
+    return false;
+  }
+
   return true;
+}
+
+void video_creek::SenderInstance::runSender()
+{
+  while(true)
+  {
+    std::unique_lock<std::mutex> lock(mFramesGrabberThreadMutex_);
+
+    mConditionVariableFramesGrabberThread_.wait(lock, [this]()
+    {
+      return false;
+    });
+  }
+
 }

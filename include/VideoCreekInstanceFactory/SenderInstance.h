@@ -42,6 +42,9 @@
 
 #include <memory>
 #include <vector>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 #include <opencv2/core/mat.hpp>
 
@@ -61,8 +64,13 @@ class SenderInstance : public IVideoCreekInstance
   , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_) }
   , mCompressionHandler_ { std::make_shared<CompressionHandler>() }
   , mUdpStreamer_ { std::make_shared<UdpStreamer>() }
+  , mFramesGrabberThread_ { nullptr }
+  , mConditionVariableFramesGrabberThread_ {}
+  , mFramesGrabberThreadMutex_ {}
   {
   }
+
+  ~SenderInstance();
 
   bool start() override;
 
@@ -72,6 +80,11 @@ class SenderInstance : public IVideoCreekInstance
   std::shared_ptr<CameraHandler> mCameraHandler_;
   std::shared_ptr<CompressionHandler> mCompressionHandler_;
   std::shared_ptr<UdpStreamer> mUdpStreamer_;
+  std::shared_ptr<std::thread> mFramesGrabberThread_;
+  std::condition_variable mConditionVariableFramesGrabberThread_;
+  std::mutex mFramesGrabberThreadMutex_;
+
+  void runSender();
 };
 } /*namespace video_creek*/
 

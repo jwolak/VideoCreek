@@ -48,6 +48,8 @@ class UdpStreamer
   UdpStreamer()
   {
   }
+
+  bool setup();
 };
 } /*namespace video_creek*/
 

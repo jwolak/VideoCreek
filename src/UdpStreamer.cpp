@@ -38,3 +38,10 @@
  */
 
 #include "UdpStreamer.h"
+#include "EquinoxLogger.h"
+
+bool video_creek::UdpStreamer::setup()
+{
+
+  return true;
+}

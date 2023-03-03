@@ -38,3 +38,9 @@
  */
 
 #include "CameraHandler.h"
+
+bool video_creek::CameraHandler::openCam()
+{
+
+  return true;
+}

@@ -54,6 +54,8 @@ class CameraHandler
   {
   }
 
+  bool openCam();
+
  private:
   std::shared_ptr<cv::Mat> imageBuffer_;
 
