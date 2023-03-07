@@ -41,6 +41,10 @@
 #define INCLUDE_CAMERAHANDLER_H_
 
 #include <memory>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <functional>
 
 #include <opencv2/core/mat.hpp>
 
@@ -51,14 +55,22 @@ class CameraHandler
  public:
   CameraHandler(std::shared_ptr<cv::Mat> imageBuffer)
   : imageBuffer_ { imageBuffer }
+  , mFramesGrabberThread_ {}
+  , mConditionVariableFramesGrabberThread_{}
+  , mFramesGrabberThreadMutex_ {}
   {
   }
 
   bool openCam();
+  bool start(std::function<void(void)> frameReceivedCallback);
 
  private:
   std::shared_ptr<cv::Mat> imageBuffer_;
+  std::shared_ptr<std::thread> mFramesGrabberThread_;
+  std::condition_variable mConditionVariableFramesGrabberThread_;
+  std::mutex mFramesGrabberThreadMutex_;
 
+  void runCamera();
 };
 } /*namespace video_creek*/
 

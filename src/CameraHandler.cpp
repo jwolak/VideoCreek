@@ -38,9 +38,34 @@
  */
 
 #include "CameraHandler.h"
+#include "EquinoxLogger.h"
 
 bool video_creek::CameraHandler::openCam()
 {
 
   return true;
+}
+
+bool video_creek::CameraHandler::start(std::function<void(void)> frameReceivedCallback)
+{
+
+  if(nullptr == (mFramesGrabberThread_ = std::make_shared<std::thread>(&CameraHandler::runCamera, this)))
+  {
+    return false;
+  }
+
+  return true;
+}
+
+void video_creek::CameraHandler::runCamera()
+{
+  while(true)
+  {
+    std::unique_lock<std::mutex> lock(mFramesGrabberThreadMutex_);
+
+    mConditionVariableFramesGrabberThread_.wait(lock, [this]()
+    {
+      return false;
+    });
+  }
 }

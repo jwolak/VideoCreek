@@ -42,10 +42,15 @@
 
 video_creek::SenderInstance::~SenderInstance()
 {
-  if(nullptr != mFramesGrabberThread_)
+  if(nullptr != mFrameSenderThread_)
   {
-    mFramesGrabberThread_->join();
+    mFrameSenderThread_->join();
   }
+}
+
+void video_creek::SenderInstance::triggerSend()
+{
+  mNewFrameReceivedFlag_ = ~mNewFrameReceivedFlag_;
 }
 
 bool video_creek::SenderInstance::start()
@@ -64,7 +69,12 @@ bool video_creek::SenderInstance::start()
   }
   equinox::error("%s", "[SenderInstance] Setup UDP streamer successful");
 
-  if(nullptr == (mFramesGrabberThread_ = std::make_shared<std::thread>(&SenderInstance::runSender, this)))
+  if(mCameraHandler_->start(std::bind(&video_creek::SenderInstance::triggerSend, this)))
+  {
+    return false;
+  }
+
+  if(nullptr == (mFrameSenderThread_ = std::make_shared<std::thread>(&SenderInstance::runSender, this)))
   {
     return false;
   }
@@ -76,12 +86,14 @@ void video_creek::SenderInstance::runSender()
 {
   while(true)
   {
-    std::unique_lock<std::mutex> lock(mFramesGrabberThreadMutex_);
+    std::unique_lock<std::mutex> lock(mFramesSenderThreadMutex_);
 
-    mConditionVariableFramesGrabberThread_.wait(lock, [this]()
+    mConditionVariableFramesSenderThread_.wait(lock, [this]()
     {
-      return false;
+      return (mNewFrameReceivedFlag_ == true);
     });
+
+    mNewFrameReceivedFlag_ = ~mNewFrameReceivedFlag_;
   }
 
 }

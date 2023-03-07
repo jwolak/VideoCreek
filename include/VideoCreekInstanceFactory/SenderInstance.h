@@ -45,6 +45,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <atomic>
 
 #include <opencv2/core/mat.hpp>
 
@@ -64,15 +65,17 @@ class SenderInstance : public IVideoCreekInstance
   , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_) }
   , mCompressionHandler_ { std::make_shared<CompressionHandler>() }
   , mUdpStreamer_ { std::make_shared<UdpStreamer>() }
-  , mFramesGrabberThread_ { nullptr }
-  , mConditionVariableFramesGrabberThread_ {}
-  , mFramesGrabberThreadMutex_ {}
+  , mFrameSenderThread_ { nullptr }
+  , mConditionVariableFramesSenderThread_ {}
+  , mFramesSenderThreadMutex_ {}
+  , mNewFrameReceivedFlag_ { false }
   {
   }
 
   ~SenderInstance();
 
   bool start() override;
+  void triggerSend();
 
  private:
   std::shared_ptr<cv::Mat> mImageBuffer_;
@@ -80,9 +83,10 @@ class SenderInstance : public IVideoCreekInstance
   std::shared_ptr<CameraHandler> mCameraHandler_;
   std::shared_ptr<CompressionHandler> mCompressionHandler_;
   std::shared_ptr<UdpStreamer> mUdpStreamer_;
-  std::shared_ptr<std::thread> mFramesGrabberThread_;
-  std::condition_variable mConditionVariableFramesGrabberThread_;
-  std::mutex mFramesGrabberThreadMutex_;
+  std::shared_ptr<std::thread> mFrameSenderThread_;
+  std::condition_variable mConditionVariableFramesSenderThread_;
+  std::mutex mFramesSenderThreadMutex_;
+  std::atomic<bool> mNewFrameReceivedFlag_;
 
   void runSender();
 };
