@@ -1,5 +1,5 @@
 /*
- * SenderInstance.h
+ * UdpStreamer.cpp
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,59 +37,11 @@
  *
  */
 
-#ifndef INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_
-#define INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_
-
-#include <memory>
-#include <vector>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <atomic>
-
-#include <opencv2/core/mat.hpp>
-
-#include "IVideoCreekInstance.h"
-#include "CameraHandler.h"
-#include "CompressionHandler.h"
 #include "UdpStreamer.h"
+#include "EquinoxLogger.h"
 
-namespace video_creek
+bool video_creek::UdpStreamer::setup()
 {
-class SenderInstance : public IVideoCreekInstance
-{
- public:
-  SenderInstance()
-  : mImageBuffer_ { std::make_shared<cv::Mat>() }
-  , mEncodedVideoBuffer_ {}
-  , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_) }
-  , mCompressionHandler_ { std::make_shared<CompressionHandler>() }
-  , mUdpStreamer_ { std::make_shared<UdpStreamer>() }
-  , mFrameSenderThread_ { nullptr }
-  , mConditionVariableFramesSenderThread_ {}
-  , mFramesSenderThreadMutex_ {}
-  , mNewFrameReceivedFlag_ { false }
-  {
-  }
 
-  ~SenderInstance();
-
-  bool start() override;
-  void triggerSend();
-
- private:
-  std::shared_ptr<cv::Mat> mImageBuffer_;
-  std::vector<uint8_t> mEncodedVideoBuffer_;
-  std::shared_ptr<CameraHandler> mCameraHandler_;
-  std::shared_ptr<CompressionHandler> mCompressionHandler_;
-  std::shared_ptr<UdpStreamer> mUdpStreamer_;
-  std::shared_ptr<std::thread> mFrameSenderThread_;
-  std::condition_variable mConditionVariableFramesSenderThread_;
-  std::mutex mFramesSenderThreadMutex_;
-  std::atomic<bool> mNewFrameReceivedFlag_;
-
-  void runSender();
-};
-} /*namespace video_creek*/
-
-#endif /* INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_ */
+  return true;
+}

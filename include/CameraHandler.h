@@ -1,5 +1,5 @@
 /*
- * SenderInstance.h
+ * CameraHandler.h
  *
  *  Created on: 2023
  *      Author: Janusz Wolak
@@ -37,59 +37,41 @@
  *
  */
 
-#ifndef INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_
-#define INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_
+#ifndef INCLUDE_CAMERAHANDLER_H_
+#define INCLUDE_CAMERAHANDLER_H_
 
 #include <memory>
-#include <vector>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-#include <atomic>
+#include <functional>
 
 #include <opencv2/core/mat.hpp>
 
-#include "IVideoCreekInstance.h"
-#include "CameraHandler.h"
-#include "CompressionHandler.h"
-#include "UdpStreamer.h"
-
 namespace video_creek
 {
-class SenderInstance : public IVideoCreekInstance
+class CameraHandler
 {
  public:
-  SenderInstance()
-  : mImageBuffer_ { std::make_shared<cv::Mat>() }
-  , mEncodedVideoBuffer_ {}
-  , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_) }
-  , mCompressionHandler_ { std::make_shared<CompressionHandler>() }
-  , mUdpStreamer_ { std::make_shared<UdpStreamer>() }
-  , mFrameSenderThread_ { nullptr }
-  , mConditionVariableFramesSenderThread_ {}
-  , mFramesSenderThreadMutex_ {}
-  , mNewFrameReceivedFlag_ { false }
+  CameraHandler(std::shared_ptr<cv::Mat> imageBuffer)
+  : imageBuffer_ { imageBuffer }
+  , mFramesGrabberThread_ {}
+  , mConditionVariableFramesGrabberThread_{}
+  , mFramesGrabberThreadMutex_ {}
   {
   }
 
-  ~SenderInstance();
-
-  bool start() override;
-  void triggerSend();
+  bool openCam();
+  bool start(std::function<void(void)> frameReceivedCallback);
 
  private:
-  std::shared_ptr<cv::Mat> mImageBuffer_;
-  std::vector<uint8_t> mEncodedVideoBuffer_;
-  std::shared_ptr<CameraHandler> mCameraHandler_;
-  std::shared_ptr<CompressionHandler> mCompressionHandler_;
-  std::shared_ptr<UdpStreamer> mUdpStreamer_;
-  std::shared_ptr<std::thread> mFrameSenderThread_;
-  std::condition_variable mConditionVariableFramesSenderThread_;
-  std::mutex mFramesSenderThreadMutex_;
-  std::atomic<bool> mNewFrameReceivedFlag_;
+  std::shared_ptr<cv::Mat> imageBuffer_;
+  std::shared_ptr<std::thread> mFramesGrabberThread_;
+  std::condition_variable mConditionVariableFramesGrabberThread_;
+  std::mutex mFramesGrabberThreadMutex_;
 
-  void runSender();
+  void runCamera();
 };
 } /*namespace video_creek*/
 
-#endif /* INCLUDE_VIDEOCREEKINSTANCEFACTORY_SENDERINSTANCE_H_ */
+#endif /* INCLUDE_CAMERAHANDLER_H_ */
