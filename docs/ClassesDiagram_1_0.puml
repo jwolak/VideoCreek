@@ -1,0 +1,129 @@
+@startuml
+
+class VideoCreek
+{
+  +start()
+
+  -mCmdArguments_
+  -mIVideoCreekInstanceFactory_
+  -mVideoCreekInstance_
+}
+
+class CmdArguments
+{
+  +setMode()
+  +getMode()
+  +setPort()
+  +getPort()
+  +setDstAddress()
+  +getDstAddress()
+  +setCompressionRatio()
+  +getCompressionRatio()
+
+  -mMode_
+  -mPort_
+  -mDstAddress_
+  -nCompressionRatio_
+}
+
+enum Mode
+{
+  +RECEIVER
+  +SENDER  
+}
+
+class CmdArgumentsParser
+{
+  +parseArgs()
+
+  -mCmdArguments_
+  -printHelp()
+}
+
+class VideoCreekInstanceFactory
+{
+  +MakeInstance()
+
+  -mCmdArguments_
+  -mVideoCreekFactories_
+}
+
+interface IVideoCreekInstanceFactory
+{
+  +Create()
+}
+
+class ReceiverInstanceFactory
+{
+  +Create()
+}
+
+class SenderInstanceFactory
+{
+  +Create()
+}
+
+interface IVideoCreekInstance
+{
+  +start()
+}
+
+class SenderInstance
+{
+  +start()
+
+  -mCameraHandler_
+  -mCompressionHandler_
+  -mUdpStreamer_
+}
+
+class ReceiverInstance
+{
+  +start()
+
+  -mCameraHandler_
+  -mCompressionHandler_
+  -mUdpStreamer_
+}
+
+class VideoCreekInstanceFactory
+{
+  +MakeInstance()
+}
+
+class CameraHandler
+{
+  +openCam()
+  +start()
+}
+
+class CompressionHandler
+{
+}
+
+class UdpStreamer
+{
+  +setup()
+}
+
+Mode --* CmdArguments
+CmdArgumentsParser --o CmdArguments
+VideoCreek --o CmdArguments
+VideoCreekInstanceFactory -- Mode
+VideoCreekInstanceFactory --o CmdArguments
+ReceiverInstanceFactory --|> IVideoCreekInstanceFactory
+SenderInstanceFactory --|> IVideoCreekInstanceFactory
+SenderInstance --|> IVideoCreekInstance
+ReceiverInstance --|> IVideoCreekInstance
+VideoCreekInstanceFactory -- IVideoCreekInstanceFactory
+VideoCreekInstanceFactory -- IVideoCreekInstance
+CameraHandler --o CmdArguments
+CompressionHandler --o CmdArguments
+UdpStreamer --o CmdArguments
+CameraHandler --o SenderInstance
+CompressionHandler --o SenderInstance
+UdpStreamer --o SenderInstance
+CameraHandler --o ReceiverInstance
+CompressionHandler --o ReceiverInstance
+UdpStreamer --o ReceiverInstance
+@enduml

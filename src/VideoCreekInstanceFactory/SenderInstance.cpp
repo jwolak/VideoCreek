@@ -50,7 +50,7 @@ video_creek::SenderInstance::~SenderInstance()
 
 void video_creek::SenderInstance::triggerSend()
 {
-  mNewFrameReceivedFlag_ = ~mNewFrameReceivedFlag_;
+  mNewFrameReceivedFlag_ = true;
 }
 
 bool video_creek::SenderInstance::start()
@@ -93,7 +93,7 @@ void video_creek::SenderInstance::runSender()
       return (mNewFrameReceivedFlag_ == true);
     });
 
-    mNewFrameReceivedFlag_ = ~mNewFrameReceivedFlag_;
+    mNewFrameReceivedFlag_ = false;
   }
 
 }
