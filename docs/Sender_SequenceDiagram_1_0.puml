@@ -1,0 +1,31 @@
+@startuml
+hide footbox
+
+entity Camera
+CameraHandler[#green]->Camera: Request a new video frame
+activate Camera #red
+Camera[#green]->CameraHandler: New video frame produced
+deactivate Camera #red
+
+activate CameraHandler #green
+CameraHandler->CameraHandler : Put the new frame to the buffer
+CameraHandler[#red]->CompressionHandler: New video frame is ready
+deactivate CameraHandler #green
+activate CompressionHandler #blue
+CompressionHandler->CompressionHandler: Compress the frame from the buffer
+CompressionHandler[#green]->UdpStreamer: The compressed frame is ready
+deactivate CompressionHandler #blue
+activate UdpStreamer #orange
+UdpStreamer->UdpStreamer: Prepare the packet from the buffer to be sent
+
+entity Receiver
+UdpStreamer[#red]->Receiver: Send the packet with the new video frame
+UdpStreamer[#green]->CameraHandler: Info the packet is sent
+deactivate UdpStreamer #orange
+activate CameraHandler #green
+CameraHandler[#green]->Camera: Request a new video frame
+deactivate CameraHandler #green
+
+activate Camera #red
+
+@enduml

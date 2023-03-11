@@ -13,6 +13,9 @@ make
 ## UML classes diagram:
 ![alt text](https://raw.githubusercontent.com/jwolak/VideoCreek/main/docs/ClassesDiagramUML.png)
 
+## UML sequence diagram of sender:
+![alt text](https://raw.githubusercontent.com/jwolak/VideoCreek/development/docs/Sender_SequenceDiagram_1_0.png)
+
 ## License
 
 **BSD 3-Clause License**
