@@ -106,6 +106,10 @@ class UdpStreamer
   +setup()
 }
 
+class VideoHandler
+{
+}
+
 Mode --* CmdArguments
 CmdArgumentsParser --o CmdArguments
 VideoCreek --o CmdArguments

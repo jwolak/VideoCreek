@@ -58,3 +58,4 @@ CMakeCache.txt
 Makefile
 
 *.adoc
+*.log
