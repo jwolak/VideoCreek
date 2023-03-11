@@ -1,0 +1,21 @@
+@startuml
+
+hide footbox
+
+entity Sender
+Sender [#red]-> UdpStreamer: Receive the compressed packet
+activate UdpStreamer #red
+UdpStreamer -> UdpStreamer: Put the compressed packet to the buffer
+UdpStreamer [#green]-> CompressionHandler: The new packet to be decompress
+deactivate UdpStreamer
+activate CompressionHandler #green
+CompressionHandler -> CompressionHandler: Decompress the packet
+CompressionHandler [#blue]-> VideoHandler: The new frame is ready
+deactivate CompressionHandler
+activate VideoHandler #blue
+VideoHandler -> VideoHandler: Prepare the frame to be displayed
+Actor User
+VideoHandler [#orange]-> User: Display the frame
+deactivate VideoHandler
+
+@enduml
