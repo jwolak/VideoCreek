@@ -48,9 +48,14 @@ video_creek::SenderInstance::~SenderInstance()
   }
 }
 
-void video_creek::SenderInstance::triggerSend()
+void video_creek::SenderInstance::newFrameProducedCallback()
 {
   mNewFrameReceivedFlag_ = true;
+}
+
+void video_creek::SenderInstance::compressedFrameIsReadyCallback()
+{
+  mCompressedFrameIsReadyFlag_ = true;
 }
 
 bool video_creek::SenderInstance::start()
@@ -69,31 +74,63 @@ bool video_creek::SenderInstance::start()
   }
   equinox::error("%s", "[SenderInstance] Setup UDP streamer successful");
 
-  if(mCameraHandler_->start(std::bind(&video_creek::SenderInstance::triggerSend, this)))
+  if(!mCameraHandler_->start(std::bind(&video_creek::SenderInstance::newFrameProducedCallback, this)))
   {
+    equinox::error("%s", "[SenderInstance] Start CameraHandler failed");
     return false;
   }
+  equinox::trace("%s", "[SenderInstance] Start CameraHandler successful");
+
+  if(!mCompressionHandler_->start(std::bind(&video_creek::SenderInstance::compressedFrameIsReadyCallback, this)))
+  {
+    equinox::error("%s", "[SenderInstance] Start CompressionHandler failed");
+    return false;
+  }
+  equinox::error("%s", "[SenderInstance] Start CompressionHandler successful");
 
   if(nullptr == (mFrameSenderThread_ = std::make_shared<std::thread>(&SenderInstance::runSender, this)))
   {
+    equinox::error("%s", "[SenderInstance] Launch Sender thread failed");
     return false;
   }
+  equinox::trace("%s", "[SenderInstance] Launch Sender thread successful");
 
+  equinox::trace("%s", "[SenderInstance] Sender start successful");
   return true;
 }
 
 void video_creek::SenderInstance::runSender()
 {
-  while(true)
+  //TODO Init request ???
+  mCameraHandler_->requestNewFrame();
+
+  while(true)//TODO introduce brake (signal)
   {
     std::unique_lock<std::mutex> lock(mFramesSenderThreadMutex_);
 
     mConditionVariableFramesSenderThread_.wait(lock, [this]()
     {
-      return (mNewFrameReceivedFlag_ == true);
+      return (mNewFrameReceivedFlag_ == true or mCompressedFrameIsReadyFlag_ == true || mInfoPacketIsSentFlag_ == true);
     });
 
-    mNewFrameReceivedFlag_ = false;
+    if (mNewFrameReceivedFlag_ == true)
+    {
+      mNewFrameReceivedFlag_ = false;
+      mCompressionHandler_->compressFrame();
+    }
+
+    if (mCompressedFrameIsReadyFlag_ == true)
+    {
+      mCompressedFrameIsReadyFlag_ = false;
+      //mUdpStreamer_->send();
+    }
+
+    if (mInfoPacketIsSentFlag_ == true)
+    {
+      mInfoPacketIsSentFlag_ == false;
+      mCameraHandler_->requestNewFrame();
+    }
+
   }
 
 }

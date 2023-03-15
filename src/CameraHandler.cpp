@@ -49,6 +49,15 @@ bool video_creek::CameraHandler::openCam()
 bool video_creek::CameraHandler::start(std::function<void(void)> frameReceivedCallback)
 {
 
+  if (frameReceivedCallback != nullptr)
+  {
+    mFrameReceivedCallback_ = frameReceivedCallback;
+  }
+  else
+  {
+    return false;
+  }
+
   if(nullptr == (mFramesGrabberThread_ = std::make_shared<std::thread>(&CameraHandler::runCamera, this)))
   {
     return false;
@@ -65,7 +74,18 @@ void video_creek::CameraHandler::runCamera()
 
     mConditionVariableFramesGrabberThread_.wait(lock, [this]()
     {
-      return false;
+      return mNewFrameRequestedFlag_ == true;
     });
+
+    if (mNewFrameRequestedFlag_ == true)
+    {
+      mNewFrameRequestedFlag_ = false;
+      //get frame from cam
+    }
   }
+}
+
+void video_creek::CameraHandler::requestNewFrame()
+{
+  mNewFrameRequestedFlag_ = true;
 }

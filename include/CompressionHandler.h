@@ -40,14 +40,40 @@
 #ifndef INCLUDE_COMPRESSIONHANDLER_H_
 #define INCLUDE_COMPRESSIONHANDLER_H_
 
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+#include <memory>
+#include <functional>
+
+#include <opencv2/core/mat.hpp>
+
 namespace video_creek
 {
 class CompressionHandler
 {
  public:
-  CompressionHandler()
+  CompressionHandler(std::shared_ptr<cv::Mat> imageBuffer)
+  : mCompressionHandlerThread_ {}
+  , mConditionVariableCompressionHandlerThread_ {}
+  , mCompressionHandlerThreadMutex_ {}
+  , mNewFrameToCompressFlag_ { false }
+  , mCompressedFrameIsReadyCallback_ { nullptr }
   {
   }
+
+  bool start(std::function<void(void)> compressedFrameIsReadyCallback);
+  void compressFrame();
+
+ private:
+  std::shared_ptr<std::thread> mCompressionHandlerThread_;
+  std::condition_variable mConditionVariableCompressionHandlerThread_;
+  std::mutex mCompressionHandlerThreadMutex_;
+  std::atomic<bool> mNewFrameToCompressFlag_;
+  std::function<void(void)> mCompressedFrameIsReadyCallback_;
+
+  void runCompressor();
 
 };
 } /*namespace video_creek*/

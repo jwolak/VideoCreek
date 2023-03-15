@@ -63,19 +63,22 @@ class SenderInstance : public IVideoCreekInstance
   : mImageBuffer_ { std::make_shared<cv::Mat>() }
   , mEncodedVideoBuffer_ {}
   , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_) }
-  , mCompressionHandler_ { std::make_shared<CompressionHandler>() }
+  , mCompressionHandler_ { std::make_shared<CompressionHandler>(mImageBuffer_) }
   , mUdpStreamer_ { std::make_shared<UdpStreamer>() }
   , mFrameSenderThread_ { nullptr }
   , mConditionVariableFramesSenderThread_ {}
   , mFramesSenderThreadMutex_ {}
   , mNewFrameReceivedFlag_ { false }
+  , mCompressedFrameIsReadyFlag_ { false }
+  , mInfoPacketIsSentFlag_ { false }
   {
   }
 
   ~SenderInstance();
 
   bool start() override;
-  void triggerSend();
+  void newFrameProducedCallback();
+  void compressedFrameIsReadyCallback();
 
  private:
   std::shared_ptr<cv::Mat> mImageBuffer_;
@@ -87,6 +90,8 @@ class SenderInstance : public IVideoCreekInstance
   std::condition_variable mConditionVariableFramesSenderThread_;
   std::mutex mFramesSenderThreadMutex_;
   std::atomic<bool> mNewFrameReceivedFlag_;
+  std::atomic<bool> mCompressedFrameIsReadyFlag_;
+  std::atomic<bool> mInfoPacketIsSentFlag_;
 
   void runSender();
 };
