@@ -38,3 +38,52 @@
  */
 
 #include "CompressionHandler.h"
+#include "EquinoxLogger.h"
+
+bool video_creek::CompressionHandler::start(std::function<void(void)> compressedFrameIsReadyCallback)
+{
+  if (compressedFrameIsReadyCallback != nullptr)
+  {
+    mCompressedFrameIsReadyCallback_ = compressedFrameIsReadyCallback;
+  }
+  else
+  {
+    return false;
+  }
+
+  if (nullptr == (mCompressionHandlerThread_ = std::make_shared<std::thread>(&CompressionHandler::runCompressor, this)))
+  {
+    equinox::error("%s", "[CompressionHandler] Launch CompressionHandler thread failed");
+    return false;
+  }
+  equinox::trace("%s", "[CompressionHandler] Launch CompressionHandler thread successful");
+
+  return true;
+}
+
+void video_creek::CompressionHandler::runCompressor()
+{
+  while(true)
+  {
+    std::unique_lock<std::mutex> lock(mCompressionHandlerThreadMutex_);
+
+    mConditionVariableCompressionHandlerThread_.wait(lock, [this]()
+    {
+      return (mNewFrameToCompressFlag_ == true);
+    });
+
+    if (mNewFrameToCompressFlag_ == true)
+    {
+      mNewFrameToCompressFlag_ = false;
+
+      //compress and inform sender thread
+      mCompressedFrameIsReadyCallback_();
+    }
+
+  }
+}
+
+void video_creek::CompressionHandler::compressFrame()
+{
+  mNewFrameToCompressFlag_ = true;
+}

@@ -45,6 +45,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <functional>
+#include <atomic>
 
 #include <opencv2/core/mat.hpp>
 
@@ -58,17 +59,22 @@ class CameraHandler
   , mFramesGrabberThread_ {}
   , mConditionVariableFramesGrabberThread_{}
   , mFramesGrabberThreadMutex_ {}
+  , mNewFrameRequestedFlag_ { false } //TODO Init as true or false
+  , mFrameReceivedCallback_ { nullptr }
   {
   }
 
   bool openCam();
   bool start(std::function<void(void)> frameReceivedCallback);
+  void requestNewFrame();
 
  private:
   std::shared_ptr<cv::Mat> imageBuffer_;
   std::shared_ptr<std::thread> mFramesGrabberThread_;
   std::condition_variable mConditionVariableFramesGrabberThread_;
   std::mutex mFramesGrabberThreadMutex_;
+  std::atomic<bool> mNewFrameRequestedFlag_;
+  std::function<void(void)> mFrameReceivedCallback_;
 
   void runCamera();
 };
