@@ -42,14 +42,14 @@
 
 bool video_creek::VideoCreek::start()
 {
-  if ((mVideoCreekInstance_ = mIVideoCreekInstanceFactory_->MakeInstance()) == nullptr)
+  equinox::trace("%s", "VideoCreek is starting...");
+
+  if ((mVideoCreekInstance_ = mVideoCreekInstanceFactory_->MakeInstance()) == nullptr)
   {
     equinox::error("%s%s", "[VideoCreek] Make instance with mode: ", static_cast<bool>(mCmdArguments_->getMode()) ? "sender" : "receiver");
     return false;
-  } else
-  {
-    equinox::debug("%s", "[VideoCreeks] Created Video Creeks instance successfully");
   }
+  equinox::debug("%s", "[VideoCreeks] Created Video Creeks instance successfully");
 
   if (!mVideoCreekInstance_->start())
   {
