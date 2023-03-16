@@ -114,6 +114,7 @@ void video_creek::SenderInstance::runSender()
   {
     std::unique_lock<std::mutex> lock(mFramesSenderThreadMutex_);
 
+    equinox::trace("%s", "[SenderInstance] SenderInstance thread is waiting for signal...");
     mConditionVariableFramesSenderThread_.wait(lock, [this]()
     {
       return ((mNewFrameReceivedFlag_ == true) or (mCompressedFrameIsReadyFlag_ == true) or (mInfoPacketIsSentFlag_ == true));

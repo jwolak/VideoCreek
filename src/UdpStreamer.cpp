@@ -105,7 +105,9 @@ void video_creek::UdpStreamer::runReceiver()
   {
     //wait for frame
     //set flag when received
-    mNewFreameReceivedFlag_ = true;
+
+
+    //mNewFreameReceivedFlag_ = true;
   }
 }
 
@@ -115,6 +117,7 @@ void video_creek::UdpStreamer::runSender()
   {
     std::unique_lock<std::mutex> lock(mSenderThreadMutex_);
 
+    equinox::trace("%s", "[UdpStreamer] Sender thread is waiting for signal...");
     mConditionVariableSenderThread_.wait(lock, [this]()
     {
       return (mRequestSendFrameFlag_ == true);
@@ -135,6 +138,7 @@ void video_creek::UdpStreamer::runUdpStreamer()
   {
     std::unique_lock<std::mutex> lock(mUdpStreamerMutex_);
 
+    equinox::trace("%s", "[UdpStreamer] UdpStreamer main thread is waiting for signal...");
     mConditionVariableUdpStreamerThread_.wait(lock, [this]()
     {
       return ((mNewCompressFrameToBeSentFlag_ == true) or (mNewFreameReceivedFlag_ == true) or (mNewFreameSentFlag_ == true));
