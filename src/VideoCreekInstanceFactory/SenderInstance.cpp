@@ -58,6 +58,12 @@ void video_creek::SenderInstance::compressedFrameIsReadyCallback()
   mCompressedFrameIsReadyFlag_ = true;
 }
 
+void video_creek::SenderInstance::compressedFrameIsSentInfoCallback()
+{
+  mInfoPacketIsSentFlag_ = true;
+}
+
+
 bool video_creek::SenderInstance::start()
 {
   if(!mCameraHandler_->openCam())
@@ -67,7 +73,7 @@ bool video_creek::SenderInstance::start()
   }
   equinox::trace("%s", "[SenderInstance] Open camera device successful");
 
-  if(!mUdpStreamer_->setup())
+  if(!mUdpStreamer_->start(std::bind(&video_creek::SenderInstance::compressedFrameIsSentInfoCallback, this)))
   {
     equinox::error("%s", "[SenderInstance] Setup UDP streamer failed");
     return false;
@@ -110,7 +116,7 @@ void video_creek::SenderInstance::runSender()
 
     mConditionVariableFramesSenderThread_.wait(lock, [this]()
     {
-      return (mNewFrameReceivedFlag_ == true or mCompressedFrameIsReadyFlag_ == true || mInfoPacketIsSentFlag_ == true);
+      return ((mNewFrameReceivedFlag_ == true) or (mCompressedFrameIsReadyFlag_ == true) or (mInfoPacketIsSentFlag_ == true));
     });
 
     if (mNewFrameReceivedFlag_ == true)
@@ -122,7 +128,7 @@ void video_creek::SenderInstance::runSender()
     if (mCompressedFrameIsReadyFlag_ == true)
     {
       mCompressedFrameIsReadyFlag_ = false;
-      //mUdpStreamer_->send();
+      mUdpStreamer_->send();
     }
 
     if (mInfoPacketIsSentFlag_ == true)

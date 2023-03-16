@@ -40,8 +40,105 @@
 #include "UdpStreamer.h"
 #include "EquinoxLogger.h"
 
-bool video_creek::UdpStreamer::setup()
+bool video_creek::UdpStreamer::start(std::function<void(void)> compressedFrameIsSentInfoCallback)
 {
 
+  if (nullptr != compressedFrameIsSentInfoCallback)
+  {
+    mCompressedFrameIsSentInfoCallback_ = compressedFrameIsSentInfoCallback;
+  }
+  else
+  {
+    return false;
+  }
+
+  if (nullptr == (mUdpStreamerThread_ = std::make_shared<std::thread>(&UdpStreamer::runUdpStreamer, this)))
+  {
+    equinox::error("%s", "[UdpStreamer] Launch UdpStreamer thread failed");
+    return false;
+  }
+  equinox::trace("%s", "[UdpStreamer] Launch UdpStreamer thread successful");
+
+  if (nullptr == (mReceiverThread_ == std::make_shared<std::thread>(&UdpStreamer::runReceiver, this)))
+  {
+    equinox::error("%s", "[UdpStreamer] Launch receiver thread failed");
+    return false;
+  }
+  equinox::error("%s", "[UdpStreamer] Launch receiver thread successful");
+
+  if (nullptr == (mReceiverThread_ == std::make_shared<std::thread>(&UdpStreamer::runSender, this)))
+  {
+    equinox::error("%s", "[UdpStreamer] Launch sender thread failed");
+    return false;
+  }
+  equinox::error("%s", "[UdpStreamer] Launch sender thread successful");
+
   return true;
+}
+
+void video_creek::UdpStreamer::send()
+{
+  mNewCompressFrameToBeSentFlag_ = true;
+}
+
+void video_creek::UdpStreamer::runReceiver()
+{
+  while(true)
+  {
+    //wait for frame
+    //set flag when received
+    mNewFreameReceivedFlag_ = true;
+  }
+}
+
+void video_creek::UdpStreamer::runSender()
+{
+  while(true)
+  {
+    std::unique_lock<std::mutex> lock(mSenderThreadMutex_);
+
+    mConditionVariableSenderThread_.wait(lock, [this]()
+    {
+      return (mRequestSendFrameFlag_ == true);
+    })
+
+    if (mRequestSendFrameFlag_ == true)
+    {
+      mRequestSendFrameFlag_ = false;
+      //send frame and inform main thread
+      mNewFreameSentFlag_ = true;
+    }
+  }
+}
+
+void video_creek::UdpStreamer::runUdpStreamer()
+{
+  while (true)
+  {
+    std::unique_lock<std::mutex> lock(mUdpStreamerMutex_);
+
+    mConditionVariableUdpStreamerThread_.wait(lock, [this]()
+    {
+      return ((mNewCompressFrameToBeSentFlag_ == true) or (mNewFreameReceivedFlag_ == true) or (mNewFreameSentFlag_ == true));
+    });
+
+    if (mNewCompressFrameToBeSentFlag_ == true)
+    {
+      mNewCompressFrameToBeSentFlag_ = false;
+      mRequestSendFrameFlag_ = true;
+    }
+
+    if (mNewFreameSentFlag_ == true)
+    {
+      mNewFreameSentFlag_ = false;
+      mCompressedFrameIsSentInfoCallback_();
+    }
+
+    if (mNewFreameReceivedFlag_ == true)
+    {
+      //decompress and inform
+      mNewFreameReceivedFlag_ = false;
+    }
+
+  }
 }
