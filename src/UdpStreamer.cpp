@@ -40,6 +40,24 @@
 #include "UdpStreamer.h"
 #include "EquinoxLogger.h"
 
+video_creek::UdpStreamer::~UdpStreamer()
+{
+  if(nullptr != mSenderThread_)
+  {
+    mSenderThread_->join();
+  }
+
+  if(nullptr != mReceiverThread_)
+  {
+    mReceiverThread_->join();
+  }
+
+  if(nullptr != mUdpStreamerThread_)
+  {
+    mUdpStreamerThread_->join();
+  }
+}
+
 bool video_creek::UdpStreamer::start(std::function<void(void)> compressedFrameIsSentInfoCallback)
 {
 

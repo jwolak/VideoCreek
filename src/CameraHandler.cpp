@@ -40,6 +40,14 @@
 #include "CameraHandler.h"
 #include "EquinoxLogger.h"
 
+video_creek::CameraHandler::~CameraHandler()
+{
+  if(nullptr != mFramesGrabberThread_)
+  {
+    mFramesGrabberThread_->join();
+  }
+}
+
 bool video_creek::CameraHandler::openCam()
 {
 

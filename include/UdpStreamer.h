@@ -71,6 +71,8 @@ class UdpStreamer
   {
   }
 
+  ~UdpStreamer();
+
   bool start(std::function<void(void)> compressedFrameIsSentInfoCallback);
   void send();
 
