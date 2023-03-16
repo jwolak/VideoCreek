@@ -41,6 +41,7 @@
 #define INCLUDE_VIDEOCREEKINSTANCEFACTORY_IVIDEOCREEKINSTANCEFACTORY_H_
 
 #include "IVideoCreekInstance.h"
+#include "CmdArguments.h"
 
 #include <memory>
 
@@ -49,7 +50,7 @@ namespace video_creek {
 class IVideoCreekInstanceFactory {
  public:
   virtual ~IVideoCreekInstanceFactory() = default;
-  virtual std::unique_ptr<IVideoCreekInstance> Create() const = 0;
+  virtual std::unique_ptr<IVideoCreekInstance> Create(std::shared_ptr<CmdArguments>) const = 0;
 };
 
 } /*namespace video_creek */

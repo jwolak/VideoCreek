@@ -59,14 +59,14 @@ bool video_creek::UdpStreamer::start(std::function<void(void)> compressedFrameIs
   }
   equinox::trace("%s", "[UdpStreamer] Launch UdpStreamer thread successful");
 
-  if (nullptr == (mReceiverThread_ == std::make_shared<std::thread>(&UdpStreamer::runReceiver, this)))
+  if (nullptr == (mReceiverThread_ = std::make_shared<std::thread>(&UdpStreamer::runReceiver, this)))
   {
     equinox::error("%s", "[UdpStreamer] Launch receiver thread failed");
     return false;
   }
   equinox::error("%s", "[UdpStreamer] Launch receiver thread successful");
 
-  if (nullptr == (mReceiverThread_ == std::make_shared<std::thread>(&UdpStreamer::runSender, this)))
+  if (nullptr == (mReceiverThread_ = std::make_shared<std::thread>(&UdpStreamer::runSender, this)))
   {
     equinox::error("%s", "[UdpStreamer] Launch sender thread failed");
     return false;
@@ -100,7 +100,7 @@ void video_creek::UdpStreamer::runSender()
     mConditionVariableSenderThread_.wait(lock, [this]()
     {
       return (mRequestSendFrameFlag_ == true);
-    })
+    });
 
     if (mRequestSendFrameFlag_ == true)
     {

@@ -54,7 +54,7 @@ class SenderInstanceFactory : public IVideoCreekInstanceFactory
   {
   }
 
-  std::unique_ptr<IVideoCreekInstance> Create() const;
+  std::unique_ptr<IVideoCreekInstance> Create(std::shared_ptr<CmdArguments> cmdArguments) const;
 
 };
 } /*namespace video_creek*/
