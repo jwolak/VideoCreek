@@ -64,6 +64,8 @@ class CompressionHandler
   {
   }
 
+  ~CompressionHandler();
+
   bool start(std::function<void(void)> compressedFrameIsReadyCallback);
   void compressFrame();
 

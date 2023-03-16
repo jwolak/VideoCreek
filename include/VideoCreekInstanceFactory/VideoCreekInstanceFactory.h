@@ -58,6 +58,8 @@ class VideoCreekInstanceFactory
   VideoCreekInstanceFactory(std::shared_ptr<CmdArguments> cmdArguments)
   : mCmdArguments_ { cmdArguments }
   {
+    mVideoCreekFactories_[Mode::RECEIVER] = std::make_unique<ReceiverInstanceFactory>();
+    mVideoCreekFactories_[Mode::SENDER] = std::make_unique<SenderInstanceFactory>();
   }
 
   std::unique_ptr<IVideoCreekInstance> MakeInstance();

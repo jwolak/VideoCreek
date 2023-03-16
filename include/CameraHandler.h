@@ -64,6 +64,8 @@ class CameraHandler
   {
   }
 
+  ~CameraHandler();
+
   bool openCam();
   bool start(std::function<void(void)> frameReceivedCallback);
   void requestNewFrame();

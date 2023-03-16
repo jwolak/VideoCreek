@@ -40,8 +40,17 @@
 #include "CameraHandler.h"
 #include "EquinoxLogger.h"
 
+video_creek::CameraHandler::~CameraHandler()
+{
+  if(nullptr != mFramesGrabberThread_)
+  {
+    mFramesGrabberThread_->join();
+  }
+}
+
 bool video_creek::CameraHandler::openCam()
 {
+  equinox::trace("%s","[CameraHandler] Camera device is being opening...");
 
   return true;
 }
@@ -49,29 +58,38 @@ bool video_creek::CameraHandler::openCam()
 bool video_creek::CameraHandler::start(std::function<void(void)> frameReceivedCallback)
 {
 
+  equinox::trace("%s","[CameraHandler] CameraHandler is starting...");
+
   if (frameReceivedCallback != nullptr)
   {
     mFrameReceivedCallback_ = frameReceivedCallback;
+    equinox::debug("%s", "[CameraHandler] Frame received callback is set");
   }
   else
   {
+    equinox::error("%s", "[CameraHandler] Frame received callback is null");
     return false;
   }
 
   if(nullptr == (mFramesGrabberThread_ = std::make_shared<std::thread>(&CameraHandler::runCamera, this)))
   {
+    equinox::critical("%s", "[CameraHandler] Camera handler thread start failed");
     return false;
   }
 
+  equinox::critical("%s", "[CameraHandler] Camera handler thread start successful");
   return true;
 }
 
 void video_creek::CameraHandler::runCamera()
 {
+  equinox::trace("%s","[CameraHandler] CameraHandler thread is starting...");
+
   while(true)
   {
     std::unique_lock<std::mutex> lock(mFramesGrabberThreadMutex_);
 
+    equinox::trace("%s", "[CameraHandler] Camera handler thread is waiting for signal...");
     mConditionVariableFramesGrabberThread_.wait(lock, [this]()
     {
       return mNewFrameRequestedFlag_ == true;
@@ -79,6 +97,7 @@ void video_creek::CameraHandler::runCamera()
 
     if (mNewFrameRequestedFlag_ == true)
     {
+      equinox::trace("%s", "[CameraHandler] New frame request signal received");
       mNewFrameRequestedFlag_ = false;
       //get frame from cam
     }
@@ -87,5 +106,6 @@ void video_creek::CameraHandler::runCamera()
 
 void video_creek::CameraHandler::requestNewFrame()
 {
+  equinox::trace("%s", "[CameraHandler] New frame request received");
   mNewFrameRequestedFlag_ = true;
 }

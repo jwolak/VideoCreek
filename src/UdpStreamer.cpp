@@ -40,6 +40,24 @@
 #include "UdpStreamer.h"
 #include "EquinoxLogger.h"
 
+video_creek::UdpStreamer::~UdpStreamer()
+{
+  if(nullptr != mSenderThread_)
+  {
+    mSenderThread_->join();
+  }
+
+  if(nullptr != mReceiverThread_)
+  {
+    mReceiverThread_->join();
+  }
+
+  if(nullptr != mUdpStreamerThread_)
+  {
+    mUdpStreamerThread_->join();
+  }
+}
+
 bool video_creek::UdpStreamer::start(std::function<void(void)> compressedFrameIsSentInfoCallback)
 {
 
@@ -66,7 +84,7 @@ bool video_creek::UdpStreamer::start(std::function<void(void)> compressedFrameIs
   }
   equinox::error("%s", "[UdpStreamer] Launch receiver thread successful");
 
-  if (nullptr == (mReceiverThread_ = std::make_shared<std::thread>(&UdpStreamer::runSender, this)))
+  if (nullptr == (mSenderThread_ = std::make_shared<std::thread>(&UdpStreamer::runSender, this)))
   {
     equinox::error("%s", "[UdpStreamer] Launch sender thread failed");
     return false;

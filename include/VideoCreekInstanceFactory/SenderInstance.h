@@ -46,6 +46,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
+#include <shared_mutex>
 
 #include <opencv2/core/mat.hpp>
 
@@ -61,7 +62,8 @@ class SenderInstance : public IVideoCreekInstance
 {
  public:
   SenderInstance(std::shared_ptr<CmdArguments> cmdArguments)
-  : mCmdArguments_ { cmdArguments }
+  : mImageBufferLockMutex_ {}
+  , mCmdArguments_ { cmdArguments }
   , mImageBuffer_ { std::make_shared<cv::Mat>() }
   , mEncodedVideoBuffer_ {}
   , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_) }
@@ -84,6 +86,7 @@ class SenderInstance : public IVideoCreekInstance
   void compressedFrameIsSentInfoCallback();
 
  private:
+  mutable std::shared_mutex mImageBufferLockMutex_;
   std::shared_ptr<CmdArguments> mCmdArguments_;
   std::shared_ptr<cv::Mat> mImageBuffer_;
   std::vector<uint8_t> mEncodedVideoBuffer_;

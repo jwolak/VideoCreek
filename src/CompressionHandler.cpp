@@ -40,6 +40,14 @@
 #include "CompressionHandler.h"
 #include "EquinoxLogger.h"
 
+video_creek::CompressionHandler::~CompressionHandler()
+{
+  if(nullptr != mCompressionHandlerThread_)
+  {
+    mCompressionHandlerThread_->join();
+  }
+}
+
 bool video_creek::CompressionHandler::start(std::function<void(void)> compressedFrameIsReadyCallback)
 {
   if (compressedFrameIsReadyCallback != nullptr)
