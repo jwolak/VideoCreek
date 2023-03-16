@@ -41,13 +41,21 @@
 #define INCLUDE_VIDEOCREEKINSTANCEFACTORY_RECEIVERINSTANCE_H_
 
 #include "IVideoCreekInstance.h"
+#include "CmdArguments.h"
 
 namespace video_creek
 {
 class ReceiverInstance : public IVideoCreekInstance
 {
  public:
+  ReceiverInstance(std::shared_ptr<CmdArguments> cmdArguments)
+  : mCmdArguments_ { cmdArguments }
+  {
+  }
   bool start() override;
+
+ private:
+  std::shared_ptr<CmdArguments> mCmdArguments_;
 };
 } /*namespace video_creek*/
 

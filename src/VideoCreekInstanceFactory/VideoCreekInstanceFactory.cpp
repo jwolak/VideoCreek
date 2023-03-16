@@ -41,6 +41,6 @@
 
 std::unique_ptr<video_creek::IVideoCreekInstance> video_creek::VideoCreekInstanceFactory::MakeInstance()
 {
-  auto instance = mVideoCreekFactories_[mCmdArguments_->getMode()]->Create();
+  auto instance = mVideoCreekFactories_[mCmdArguments_->getMode()]->Create(mCmdArguments_);
   return instance;
 }

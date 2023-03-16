@@ -40,16 +40,59 @@
 #ifndef INCLUDE_UDPSTREAMER_H_
 #define INCLUDE_UDPSTREAMER_H_
 
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+#include <memory>
+#include <functional>
+
+#include <opencv2/core/mat.hpp>
+
 namespace video_creek
 {
 class UdpStreamer
 {
  public:
-  UdpStreamer()
+  UdpStreamer(std::shared_ptr<cv::Mat> imageBuffer)
+  : imageBuffer_ { imageBuffer }
+  , mUdpStreamerThread_ { nullptr }
+  , mConditionVariableUdpStreamerThread_ {}
+  , mUdpStreamerMutex_ {}
+  , mNewCompressFrameToBeSentFlag_ { false }
+  , mCompressedFrameIsSentInfoCallback_ { nullptr }
+  , mReceiverThread_ { nullptr }
+  , mSenderThread_ { nullptr }
+  , mNewFreameReceivedFlag_ { false }
+  , mRequestSendFrameFlag_ { false }
+  , mConditionVariableSenderThread_ {}
+  , mSenderThreadMutex_ {}
+  , mNewFreameSentFlag_ { false }
   {
   }
 
-  bool setup();
+  bool start(std::function<void(void)> compressedFrameIsSentInfoCallback);
+  void send();
+
+ private:
+  std::shared_ptr<cv::Mat> imageBuffer_;
+  std::shared_ptr<std::thread> mUdpStreamerThread_;
+  std::condition_variable mConditionVariableUdpStreamerThread_;
+  std::mutex mUdpStreamerMutex_;
+  std::atomic<bool> mNewCompressFrameToBeSentFlag_;
+  std::function<void(void)> mCompressedFrameIsSentInfoCallback_;
+
+  std::shared_ptr<std::thread> mReceiverThread_;
+  std::shared_ptr<std::thread> mSenderThread_;
+  std::atomic<bool> mNewFreameReceivedFlag_;
+  std::atomic<bool> mRequestSendFrameFlag_;
+  std::condition_variable mConditionVariableSenderThread_;
+  std::mutex mSenderThreadMutex_;
+  std::atomic<bool> mNewFreameSentFlag_;
+
+  void runUdpStreamer();
+  void runReceiver();
+  void runSender();
 };
 } /*namespace video_creek*/
 

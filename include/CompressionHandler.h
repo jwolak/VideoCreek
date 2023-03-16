@@ -55,7 +55,8 @@ class CompressionHandler
 {
  public:
   CompressionHandler(std::shared_ptr<cv::Mat> imageBuffer)
-  : mCompressionHandlerThread_ {}
+  : imageBuffer_ { imageBuffer } //TODO mutex for buffer?
+  , mCompressionHandlerThread_ { nullptr }
   , mConditionVariableCompressionHandlerThread_ {}
   , mCompressionHandlerThreadMutex_ {}
   , mNewFrameToCompressFlag_ { false }
@@ -67,6 +68,7 @@ class CompressionHandler
   void compressFrame();
 
  private:
+  std::shared_ptr<cv::Mat> imageBuffer_;
   std::shared_ptr<std::thread> mCompressionHandlerThread_;
   std::condition_variable mConditionVariableCompressionHandlerThread_;
   std::mutex mCompressionHandlerThreadMutex_;

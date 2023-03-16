@@ -53,18 +53,20 @@
 #include "CameraHandler.h"
 #include "CompressionHandler.h"
 #include "UdpStreamer.h"
+#include "CmdArguments.h"
 
 namespace video_creek
 {
 class SenderInstance : public IVideoCreekInstance
 {
  public:
-  SenderInstance()
-  : mImageBuffer_ { std::make_shared<cv::Mat>() }
+  SenderInstance(std::shared_ptr<CmdArguments> cmdArguments)
+  : mCmdArguments_ { cmdArguments }
+  , mImageBuffer_ { std::make_shared<cv::Mat>() }
   , mEncodedVideoBuffer_ {}
   , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_) }
   , mCompressionHandler_ { std::make_shared<CompressionHandler>(mImageBuffer_) }
-  , mUdpStreamer_ { std::make_shared<UdpStreamer>() }
+  , mUdpStreamer_ { std::make_shared<UdpStreamer>(mImageBuffer_) }
   , mFrameSenderThread_ { nullptr }
   , mConditionVariableFramesSenderThread_ {}
   , mFramesSenderThreadMutex_ {}
@@ -79,8 +81,10 @@ class SenderInstance : public IVideoCreekInstance
   bool start() override;
   void newFrameProducedCallback();
   void compressedFrameIsReadyCallback();
+  void compressedFrameIsSentInfoCallback();
 
  private:
+  std::shared_ptr<CmdArguments> mCmdArguments_;
   std::shared_ptr<cv::Mat> mImageBuffer_;
   std::vector<uint8_t> mEncodedVideoBuffer_;
   std::shared_ptr<CameraHandler> mCameraHandler_;

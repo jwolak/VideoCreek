@@ -39,7 +39,7 @@
 
 #include "ReceiverInstanceFactory.h"
 
-std::unique_ptr<video_creek::IVideoCreekInstance> video_creek::ReceiverInstanceFactory::Create() const
+std::unique_ptr<video_creek::IVideoCreekInstance> video_creek::ReceiverInstanceFactory::Create(std::shared_ptr<CmdArguments> cmdArguments) const
 {
-  return std::make_unique<video_creek::ReceiverInstance>();
+  return std::make_unique<video_creek::ReceiverInstance>(cmdArguments);
 }
