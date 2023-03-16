@@ -73,19 +73,19 @@ bool video_creek::SenderInstance::start()
   }
   equinox::trace("%s", "[SenderInstance] Open camera device successful");
 
-  if(!mUdpStreamer_->start(std::bind(&video_creek::SenderInstance::compressedFrameIsSentInfoCallback, this)))
-  {
-    equinox::error("%s", "[SenderInstance] Setup UDP streamer failed");
-    return false;
-  }
-  equinox::error("%s", "[SenderInstance] Setup UDP streamer successful");
-
   if(!mCameraHandler_->start(std::bind(&video_creek::SenderInstance::newFrameProducedCallback, this)))
   {
     equinox::error("%s", "[SenderInstance] Start CameraHandler failed");
     return false;
   }
   equinox::trace("%s", "[SenderInstance] Start CameraHandler successful");
+
+  if(!mUdpStreamer_->start(std::bind(&video_creek::SenderInstance::compressedFrameIsSentInfoCallback, this)))
+  {
+    equinox::error("%s", "[SenderInstance] Setup UDP streamer failed");
+    return false;
+  }
+  equinox::error("%s", "[SenderInstance] Setup UDP streamer successful");
 
   if(!mCompressionHandler_->start(std::bind(&video_creek::SenderInstance::compressedFrameIsReadyCallback, this)))
   {

@@ -42,7 +42,7 @@
 
 bool video_creek::VideoCreek::start()
 {
-  equinox::trace("%s", "VideoCreek is starting...");
+  equinox::trace("%s", "[VideoCreek] VideoCreek is starting...");
 
   if ((mVideoCreekInstance_ = mVideoCreekInstanceFactory_->MakeInstance()) == nullptr)
   {
