@@ -39,10 +39,34 @@
 
 #include <memory>
 #include <iostream>
+#include <cstdio>
+#include <stdlib.h>
+
+#include <csignal>
+#include <csetjmp>
 
 #include "CmdArguments.h"
 #include "CmdArgumentsParser.h"
 #include "VideoCreek.h"
+
+static jmp_buf sigend_jmp_buf;
+
+static void __attribute__ ((noreturn)) sigend_handler(int sig) {
+  printf("\n%s %d %s", "Signal", sig, "caught\n");
+  longjmp(sigend_jmp_buf, 1);
+}
+
+void catch_sigend(void (*handler)(int)) {
+#ifdef SIGINT
+  signal(SIGINT, handler);
+#endif
+#ifdef SIGTERM
+  signal(SIGTERM, handler);
+#endif
+#ifdef SIGHUP
+  signal(SIGHUP, handler);
+#endif
+}
 
 int main(int argc, char **argv)
 {
@@ -56,6 +80,12 @@ int main(int argc, char **argv)
   {
     std::cout << "[Main] Failed to start VideoCreek" << std::endl;
     exit(1);
+  }
+
+  catch_sigend(sigend_handler);
+  if (setjmp(sigend_jmp_buf)) {
+    video_creek.stop();
+    exit(0);
   }
 
   return 0;

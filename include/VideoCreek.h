@@ -59,6 +59,7 @@ class VideoCreek
   }
 
   bool start();
+  void stop();
 
  private:
   std::shared_ptr<CmdArguments> mCmdArguments_;

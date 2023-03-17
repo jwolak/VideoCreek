@@ -60,3 +60,9 @@ bool video_creek::VideoCreek::start()
   equinox::debug("%s", "[VideoCreek] Started the instance successfully");
   return true;
 }
+
+void video_creek::VideoCreek::stop()
+{
+  equinox::trace("%s", "[VideoCreek] VideoCreek is stopped...");
+  mVideoCreekInstance_->stop();
+}

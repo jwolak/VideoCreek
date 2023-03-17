@@ -61,6 +61,7 @@ class CameraHandler
   , mFramesGrabberThreadMutex_ {}
   , mNewFrameRequestedFlag_ { false } //TODO Init as true or false
   , mFrameReceivedCallback_ { nullptr }
+  , mContinueLoop_ { true }
   {
   }
 
@@ -68,6 +69,7 @@ class CameraHandler
 
   bool openCam();
   bool start(std::function<void(void)> frameReceivedCallback);
+  void stop();
   void requestNewFrame();
 
  private:
@@ -77,6 +79,7 @@ class CameraHandler
   std::mutex mFramesGrabberThreadMutex_;
   std::atomic<bool> mNewFrameRequestedFlag_;
   std::function<void(void)> mFrameReceivedCallback_;
+  std::atomic<bool> mContinueLoop_;
 
   void runCamera();
 };

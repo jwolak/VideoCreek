@@ -51,18 +51,44 @@ video_creek::SenderInstance::~SenderInstance()
 void video_creek::SenderInstance::newFrameProducedCallback()
 {
   mNewFrameReceivedFlag_ = true;
+  mConditionVariableFramesSenderThread_.notify_all();
 }
 
 void video_creek::SenderInstance::compressedFrameIsReadyCallback()
 {
   mCompressedFrameIsReadyFlag_ = true;
+  mConditionVariableFramesSenderThread_.notify_all();
 }
 
 void video_creek::SenderInstance::compressedFrameIsSentInfoCallback()
 {
   mInfoPacketIsSentFlag_ = true;
+  mConditionVariableFramesSenderThread_.notify_all();
 }
 
+void video_creek::SenderInstance::stop()
+{
+  equinox::trace("%s", "[SenderInstance] CameraHandler requested to be stopped");
+  mCameraHandler_->stop();
+
+  equinox::trace("%s", "[SenderInstance] CompressionHandler requested to be stopped");
+  mCompressionHandler_->stop();
+
+  equinox::trace("%s", "[SenderInstance] UdpStreamer requested to be stopped");
+  mUdpStreamer_->stop();
+
+  equinox::trace("%s", "[SenderInstance] SenderInstance thread requested to be stopped");
+  mContinueLoop_ = false;
+  mConditionVariableFramesSenderThread_.notify_all();
+
+  equinox::trace("%s", "[SenderInstance] Waiting until SenderInstance is stopped...");
+  if(nullptr != mFrameSenderThread_)
+  {
+    mFrameSenderThread_->join();
+  }
+
+  equinox::trace("%s", "[SenderInstance] SenderInstance is stopped");
+}
 
 bool video_creek::SenderInstance::start()
 {
@@ -85,14 +111,14 @@ bool video_creek::SenderInstance::start()
     equinox::error("%s", "[SenderInstance] Setup UDP streamer failed");
     return false;
   }
-  equinox::error("%s", "[SenderInstance] Setup UDP streamer successful");
+  equinox::trace("%s", "[SenderInstance] Setup UDP streamer successful");
 
   if(!mCompressionHandler_->start(std::bind(&video_creek::SenderInstance::compressedFrameIsReadyCallback, this)))
   {
     equinox::error("%s", "[SenderInstance] Start CompressionHandler failed");
     return false;
   }
-  equinox::error("%s", "[SenderInstance] Start CompressionHandler successful");
+  equinox::trace("%s", "[SenderInstance] Start CompressionHandler successful");
 
   if(nullptr == (mFrameSenderThread_ = std::make_shared<std::thread>(&SenderInstance::runSender, this)))
   {
@@ -110,14 +136,21 @@ void video_creek::SenderInstance::runSender()
   //TODO Init request ???
   mCameraHandler_->requestNewFrame();
 
-  while(true)//TODO introduce brake (signal)
+  while(mContinueLoop_)
   {
     std::unique_lock<std::mutex> lock(mFramesSenderThreadMutex_);
 
+    equinox::trace("%s", "[SenderInstance] SenderInstance thread is waiting for signal...");
     mConditionVariableFramesSenderThread_.wait(lock, [this]()
     {
-      return ((mNewFrameReceivedFlag_ == true) or (mCompressedFrameIsReadyFlag_ == true) or (mInfoPacketIsSentFlag_ == true));
+      return ((mNewFrameReceivedFlag_ == true) or (mCompressedFrameIsReadyFlag_ == true) or (mInfoPacketIsSentFlag_ == true) or (mContinueLoop_ == false));
     });
+
+    if (mContinueLoop_ == false)
+    {
+      equinox::trace("%s", "[SenderInstance] SenderInstance thread is being stopped...");
+      break;
+    }
 
     if (mNewFrameReceivedFlag_ == true)
     {
