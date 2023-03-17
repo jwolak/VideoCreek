@@ -75,12 +75,14 @@ class SenderInstance : public IVideoCreekInstance
   , mNewFrameReceivedFlag_ { false }
   , mCompressedFrameIsReadyFlag_ { false }
   , mInfoPacketIsSentFlag_ { false }
+  , mContinueLoop_ { true }
   {
   }
 
   ~SenderInstance();
 
   bool start() override;
+  void stop() override;
   void newFrameProducedCallback();
   void compressedFrameIsReadyCallback();
   void compressedFrameIsSentInfoCallback();
@@ -99,6 +101,7 @@ class SenderInstance : public IVideoCreekInstance
   std::atomic<bool> mNewFrameReceivedFlag_;
   std::atomic<bool> mCompressedFrameIsReadyFlag_;
   std::atomic<bool> mInfoPacketIsSentFlag_;
+  std::atomic<bool> mContinueLoop_;
 
   void runSender();
 };

@@ -38,9 +38,15 @@
  */
 
 #include "ReceiverInstance.h"
-
+#include "EquinoxLogger.h"
 
 bool video_creek::ReceiverInstance::start()
 {
   return true;
+}
+
+void video_creek::ReceiverInstance::stop()
+{
+  equinox::error("%s", "[SenderInstance] ReceiverInstance thread requested to be stopped");
+  mContinueLoop_ = false;
 }

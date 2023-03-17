@@ -55,6 +55,21 @@ bool video_creek::CameraHandler::openCam()
   return true;
 }
 
+void video_creek::CameraHandler::stop()
+{
+  equinox::trace("%s", "[CameraHandler] CameraHandler thread requested to be stopped");
+  mContinueLoop_ = false;
+  mConditionVariableFramesGrabberThread_.notify_all();
+
+  equinox::trace("%s", "[CameraHandler] Waiting until CameraHandler thread is stopped");
+  if(nullptr != mFramesGrabberThread_)
+  {
+    mFramesGrabberThread_->join();
+  }
+
+  equinox::trace("%s", "[CameraHandler] CameraHandler thread is stopped");
+}
+
 bool video_creek::CameraHandler::start(std::function<void(void)> frameReceivedCallback)
 {
 
@@ -77,7 +92,7 @@ bool video_creek::CameraHandler::start(std::function<void(void)> frameReceivedCa
     return false;
   }
 
-  equinox::critical("%s", "[CameraHandler] Camera handler thread start successful");
+  equinox::trace("%s", "[CameraHandler] Camera handler thread start successful");
   return true;
 }
 
@@ -85,15 +100,21 @@ void video_creek::CameraHandler::runCamera()
 {
   equinox::trace("%s","[CameraHandler] CameraHandler thread is starting...");
 
-  while(true)
+  while(mContinueLoop_)
   {
     std::unique_lock<std::mutex> lock(mFramesGrabberThreadMutex_);
 
     equinox::trace("%s", "[CameraHandler] Camera handler thread is waiting for signal...");
     mConditionVariableFramesGrabberThread_.wait(lock, [this]()
     {
-      return mNewFrameRequestedFlag_ == true;
+      return ((mNewFrameRequestedFlag_ == true) or (mContinueLoop_ == false));
     });
+
+    if (mContinueLoop_ == false)
+    {
+      equinox::trace("%s", "[CameraHandler] CameraHandler thread is being stopped...");
+      break;
+    }
 
     if (mNewFrameRequestedFlag_ == true)
     {

@@ -40,6 +40,8 @@
 #ifndef INCLUDE_VIDEOCREEKINSTANCEFACTORY_RECEIVERINSTANCE_H_
 #define INCLUDE_VIDEOCREEKINSTANCEFACTORY_RECEIVERINSTANCE_H_
 
+#include <atomic>
+
 #include "IVideoCreekInstance.h"
 #include "CmdArguments.h"
 
@@ -49,12 +51,15 @@ class ReceiverInstance : public IVideoCreekInstance
 {
  public:
   ReceiverInstance(std::shared_ptr<CmdArguments> cmdArguments)
-  : mCmdArguments_ { cmdArguments }
+  : mContinueLoop_ { true }
+  , mCmdArguments_ { cmdArguments }
   {
   }
   bool start() override;
+  void stop() override;
 
  private:
+  std::atomic<bool> mContinueLoop_;
   std::shared_ptr<CmdArguments> mCmdArguments_;
 };
 } /*namespace video_creek*/

@@ -48,6 +48,20 @@ video_creek::CompressionHandler::~CompressionHandler()
   }
 }
 
+void video_creek::CompressionHandler::stop()
+{
+  equinox::trace("%s", "[CompressionHandler] CompressionHandler thread requested to be stopped");
+  mContinueLoop_ = false;
+  mConditionVariableCompressionHandlerThread_.notify_all();
+
+  equinox::trace("%s", "[CompressionHandler] Waiting until CompressionHandler thread is stopped");
+  if(nullptr != mCompressionHandlerThread_)
+  {
+    mCompressionHandlerThread_->join();
+  }
+  equinox::trace("%s", "[CompressionHandler] CompressionHandler thread is stopped");
+}
+
 bool video_creek::CompressionHandler::start(std::function<void(void)> compressedFrameIsReadyCallback)
 {
   if (compressedFrameIsReadyCallback != nullptr)
@@ -77,8 +91,14 @@ void video_creek::CompressionHandler::runCompressor()
 
     mConditionVariableCompressionHandlerThread_.wait(lock, [this]()
     {
-      return (mNewFrameToCompressFlag_ == true);
+      return ((mNewFrameToCompressFlag_ == true) or (mContinueLoop_ == false));
     });
+
+    if (mContinueLoop_ == false)
+    {
+      equinox::trace("%s", "[CompressionHandler] CompressionHandler thread is being stopped...");
+      break;
+    }
 
     if (mNewFrameToCompressFlag_ == true)
     {
@@ -93,5 +113,8 @@ void video_creek::CompressionHandler::runCompressor()
 
 void video_creek::CompressionHandler::compressFrame()
 {
+  equinox::trace("%s", "[CompressionHandler] Compress the new frame requested");
   mNewFrameToCompressFlag_ = true;
+  mConditionVariableCompressionHandlerThread_.notify_all();
+
 }

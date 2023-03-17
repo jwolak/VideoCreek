@@ -58,6 +58,36 @@ video_creek::UdpStreamer::~UdpStreamer()
   }
 }
 
+void video_creek::UdpStreamer::stop()
+{
+  equinox::trace("%s", "[UdpStreamer] UdpStreamer thread requested to be stopped");
+  mContinueLoop_ = false;
+  mConditionVariableUdpStreamerThread_.notify_all();
+  mConditionVariableSenderThread_.notify_all();
+
+  equinox::trace("%s", "[UdpStreamer] Waiting until Sender thread is stopped");
+  if(nullptr != mSenderThread_)
+  {
+    mSenderThread_->join();
+  }
+  equinox::trace("%s", "[UdpStreamer] Sender thread is stopped");
+
+  equinox::trace("%s", "[UdpStreamer] Waiting until Receiver thread is stopped");
+  if(nullptr != mReceiverThread_)
+  {
+    mReceiverThread_->join();
+  }
+  equinox::trace("%s", "[UdpStreamer] Receiver thread is stopped");
+
+  equinox::trace("%s", "[UdpStreamer] Waiting until UdpStreamer thread is stopped");
+  if(nullptr != mUdpStreamerThread_)
+  {
+    mUdpStreamerThread_->join();
+  }
+  equinox::trace("%s", "[UdpStreamer] Waiti UdpStreamer thread is stopped");
+
+}
+
 bool video_creek::UdpStreamer::start(std::function<void(void)> compressedFrameIsSentInfoCallback)
 {
 
@@ -82,14 +112,14 @@ bool video_creek::UdpStreamer::start(std::function<void(void)> compressedFrameIs
     equinox::error("%s", "[UdpStreamer] Launch receiver thread failed");
     return false;
   }
-  equinox::error("%s", "[UdpStreamer] Launch receiver thread successful");
+  equinox::trace("%s", "[UdpStreamer] Launch receiver thread successful");
 
   if (nullptr == (mSenderThread_ = std::make_shared<std::thread>(&UdpStreamer::runSender, this)))
   {
     equinox::error("%s", "[UdpStreamer] Launch sender thread failed");
     return false;
   }
-  equinox::error("%s", "[UdpStreamer] Launch sender thread successful");
+  equinox::trace("%s", "[UdpStreamer] Launch sender thread successful");
 
   return true;
 }
@@ -97,52 +127,72 @@ bool video_creek::UdpStreamer::start(std::function<void(void)> compressedFrameIs
 void video_creek::UdpStreamer::send()
 {
   mNewCompressFrameToBeSentFlag_ = true;
+  mConditionVariableUdpStreamerThread_.notify_all();
 }
 
 void video_creek::UdpStreamer::runReceiver()
 {
-  while(true)
+  while(mContinueLoop_)
   {
     //wait for frame
     //set flag when received
 
 
     //mNewFreameReceivedFlag_ = true;
+    mConditionVariableUdpStreamerThread_.notify_all();
+  }
+
+  if (mContinueLoop_ == false)
+  {
+    equinox::trace("%s", "[UdpStreamer] Receiver thread is stopped");
   }
 }
 
 void video_creek::UdpStreamer::runSender()
 {
-  while(true)
+  while(mContinueLoop_)
   {
     std::unique_lock<std::mutex> lock(mSenderThreadMutex_);
 
     equinox::trace("%s", "[UdpStreamer] Sender thread is waiting for signal...");
     mConditionVariableSenderThread_.wait(lock, [this]()
     {
-      return (mRequestSendFrameFlag_ == true);
+      return ((mRequestSendFrameFlag_ == true) or (mContinueLoop_ == false));
     });
+
+    if (mContinueLoop_ == false)
+    {
+      equinox::trace("%s", "[UdpStreamer] Sender thread is being stopped");
+      break;
+    }
 
     if (mRequestSendFrameFlag_ == true)
     {
       mRequestSendFrameFlag_ = false;
       //send frame and inform main thread
       mNewFreameSentFlag_ = true;
+      mConditionVariableUdpStreamerThread_.notify_all();
     }
   }
 }
 
 void video_creek::UdpStreamer::runUdpStreamer()
 {
-  while (true)
+  while (mContinueLoop_)
   {
     std::unique_lock<std::mutex> lock(mUdpStreamerMutex_);
 
     equinox::trace("%s", "[UdpStreamer] UdpStreamer main thread is waiting for signal...");
     mConditionVariableUdpStreamerThread_.wait(lock, [this]()
     {
-      return ((mNewCompressFrameToBeSentFlag_ == true) or (mNewFreameReceivedFlag_ == true) or (mNewFreameSentFlag_ == true));
+      return ((mNewCompressFrameToBeSentFlag_ == true) or (mNewFreameReceivedFlag_ == true) or (mNewFreameSentFlag_ == true) or (mContinueLoop_ == false));
     });
+
+    if (mContinueLoop_ == false)
+    {
+      equinox::trace("%s", "[UdpStreamer] UdpStreamer thread is stopped");
+      break;
+    }
 
     if (mNewCompressFrameToBeSentFlag_ == true)
     {

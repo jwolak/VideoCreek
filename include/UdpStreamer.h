@@ -68,12 +68,14 @@ class UdpStreamer
   , mConditionVariableSenderThread_ {}
   , mSenderThreadMutex_ {}
   , mNewFreameSentFlag_ { false }
+  , mContinueLoop_ { true }
   {
   }
 
   ~UdpStreamer();
 
   bool start(std::function<void(void)> compressedFrameIsSentInfoCallback);
+  void stop();
   void send();
 
  private:
@@ -91,6 +93,7 @@ class UdpStreamer
   std::condition_variable mConditionVariableSenderThread_;
   std::mutex mSenderThreadMutex_;
   std::atomic<bool> mNewFreameSentFlag_;
+  std::atomic<bool> mContinueLoop_;
 
   void runUdpStreamer();
   void runReceiver();

@@ -61,12 +61,14 @@ class CompressionHandler
   , mCompressionHandlerThreadMutex_ {}
   , mNewFrameToCompressFlag_ { false }
   , mCompressedFrameIsReadyCallback_ { nullptr }
+  , mContinueLoop_ { true }
   {
   }
 
   ~CompressionHandler();
 
   bool start(std::function<void(void)> compressedFrameIsReadyCallback);
+  void stop();
   void compressFrame();
 
  private:
@@ -76,6 +78,7 @@ class CompressionHandler
   std::mutex mCompressionHandlerThreadMutex_;
   std::atomic<bool> mNewFrameToCompressFlag_;
   std::function<void(void)> mCompressedFrameIsReadyCallback_;
+  std::atomic<bool> mContinueLoop_;
 
   void runCompressor();
 
