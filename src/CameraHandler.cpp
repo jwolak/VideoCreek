@@ -52,6 +52,13 @@ bool video_creek::CameraHandler::openCam()
 {
   equinox::trace("%s","[CameraHandler] Camera device is being opening...");
 
+  if (!mVideoCapture_.open(mCmdArguments_->getCameraDeviceId()))
+  {
+    equinox::error("[CameraHandler] Failed to open camera device id: [%d]", mCmdArguments_->getCameraDeviceId());
+    return false;
+  }
+
+  equinox::trace("[CameraHandler] Open camera device id: [%d] successful", mCmdArguments_->getCameraDeviceId());
   return true;
 }
 
@@ -70,14 +77,14 @@ void video_creek::CameraHandler::stop()
   equinox::trace("%s", "[CameraHandler] CameraHandler thread is stopped");
 }
 
-bool video_creek::CameraHandler::start(std::function<void(void)> frameReceivedCallback)
+bool video_creek::CameraHandler::start(std::function<void(void)> newFrameProducedCallback)
 {
 
   equinox::trace("%s","[CameraHandler] CameraHandler is starting...");
 
-  if (frameReceivedCallback != nullptr)
+  if (newFrameProducedCallback != nullptr)
   {
-    mFrameReceivedCallback_ = frameReceivedCallback;
+    mFrameProducedCallback_ = newFrameProducedCallback;
     equinox::debug("%s", "[CameraHandler] Frame received callback is set");
   }
   else
@@ -122,6 +129,8 @@ void video_creek::CameraHandler::runCamera()
       mNewFrameRequestedFlag_ = false;
       //get frame from cam
     }
+
+    equinox::trace("%s", "[CameraHandler] runCamera looping...");
   }
 }
 

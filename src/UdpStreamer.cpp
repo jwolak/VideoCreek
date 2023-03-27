@@ -140,6 +140,8 @@ void video_creek::UdpStreamer::runReceiver()
 
     //mNewFreameReceivedFlag_ = true;
     mConditionVariableUdpStreamerThread_.notify_all();
+
+    //equinox::trace("%s", "[UdpStreamer] runReceiver looping...");
   }
 
   if (mContinueLoop_ == false)

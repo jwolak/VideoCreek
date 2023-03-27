@@ -101,6 +101,7 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
   int32_t portno = 0;
   int32_t logLevel = 0;
   int32_t compressRatio = 0;
+  int32_t videoDeviceId = 0;
   char address_parameter[INET_ADDRSTRLEN] = {};
 
   if (argc < MIN_NUMBER_OF_ARGUMENTS) {
@@ -117,11 +118,12 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
       {"address",   required_argument,  NULL,  'a'},
       {"compress",  required_argument,  NULL,  'c'},
       {"debug",     required_argument,  NULL,  'd'},
+      {"camera",    required_argument,  NULL,  'v'},
   };
 
   std::cout << std::endl;
 
-  while ((flag = getopt_long(argc, argv, "hsrp:a:c:d:", longopts, NULL)) != -1) {
+  while ((flag = getopt_long(argc, argv, "hsrp:a:c:d:v:", longopts, NULL)) != -1) {
     switch (flag)
     {
       case 's':
@@ -149,6 +151,12 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
         compressRatio = atoi(optarg); /* TODO Validate to 100% */
         mCmdArguments_->setCompressionRatio(compressRatio);
         std::cout << "[CmdArgumentsParser] Compression ration set to: " << compressRatio << " [%]" << std::endl;
+        break;
+
+      case 'v':
+        videoDeviceId = atoi(optarg);
+        mCmdArguments_->setCameraDeviceId(videoDeviceId);
+        std::cout << "[CmdArgumentsParser] Video device id set to: " << videoDeviceId << std::endl;
         break;
 
       case 'd':

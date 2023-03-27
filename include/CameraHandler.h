@@ -48,38 +48,45 @@
 #include <atomic>
 
 #include <opencv2/core/mat.hpp>
+#include <opencv2/videoio.hpp>
+
+#include "CmdArguments.h"
 
 namespace video_creek
 {
 class CameraHandler
 {
  public:
-  CameraHandler(std::shared_ptr<cv::Mat> imageBuffer)
-  : imageBuffer_ { imageBuffer }
+  CameraHandler(std::shared_ptr<cv::Mat> imageBuffer, std::shared_ptr<CmdArguments> cmdArguments)
+  : mImageBuffer_ { imageBuffer }
+  , mCmdArguments_ { cmdArguments }
   , mFramesGrabberThread_ {}
   , mConditionVariableFramesGrabberThread_{}
   , mFramesGrabberThreadMutex_ {}
-  , mNewFrameRequestedFlag_ { false } //TODO Init as true or false
-  , mFrameReceivedCallback_ { nullptr }
+  , mNewFrameRequestedFlag_ { false } //TODO Init as true or false?
+  , mFrameProducedCallback_ { nullptr }
   , mContinueLoop_ { true }
+  , mVideoCapture_ {}
   {
   }
 
   ~CameraHandler();
 
   bool openCam();
-  bool start(std::function<void(void)> frameReceivedCallback);
+  bool start(std::function<void(void)> newFrameProducedCallback);
   void stop();
   void requestNewFrame();
 
  private:
-  std::shared_ptr<cv::Mat> imageBuffer_;
+  std::shared_ptr<cv::Mat> mImageBuffer_;
+  std::shared_ptr<CmdArguments> mCmdArguments_;
   std::shared_ptr<std::thread> mFramesGrabberThread_;
   std::condition_variable mConditionVariableFramesGrabberThread_;
   std::mutex mFramesGrabberThreadMutex_;
   std::atomic<bool> mNewFrameRequestedFlag_;
-  std::function<void(void)> mFrameReceivedCallback_;
+  std::function<void(void)> mFrameProducedCallback_;
   std::atomic<bool> mContinueLoop_;
+  cv::VideoCapture mVideoCapture_;
 
   void runCamera();
 };

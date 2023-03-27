@@ -66,13 +66,13 @@ class SenderInstance : public IVideoCreekInstance
   , mCmdArguments_ { cmdArguments }
   , mImageBuffer_ { std::make_shared<cv::Mat>() }
   , mEncodedVideoBuffer_ {}
-  , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_) }
+  , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_, mCmdArguments_) }
   , mCompressionHandler_ { std::make_shared<CompressionHandler>(mImageBuffer_) }
   , mUdpStreamer_ { std::make_shared<UdpStreamer>(mImageBuffer_) }
   , mFrameSenderThread_ { nullptr }
   , mConditionVariableFramesSenderThread_ {}
   , mFramesSenderThreadMutex_ {}
-  , mNewFrameReceivedFlag_ { false }
+  , mNewFrameProducedFlag_ { false }
   , mCompressedFrameIsReadyFlag_ { false }
   , mInfoPacketIsSentFlag_ { false }
   , mContinueLoop_ { true }
@@ -98,7 +98,7 @@ class SenderInstance : public IVideoCreekInstance
   std::shared_ptr<std::thread> mFrameSenderThread_;
   std::condition_variable mConditionVariableFramesSenderThread_;
   std::mutex mFramesSenderThreadMutex_;
-  std::atomic<bool> mNewFrameReceivedFlag_;
+  std::atomic<bool> mNewFrameProducedFlag_;
   std::atomic<bool> mCompressedFrameIsReadyFlag_;
   std::atomic<bool> mInfoPacketIsSentFlag_;
   std::atomic<bool> mContinueLoop_;

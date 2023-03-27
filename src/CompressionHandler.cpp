@@ -108,6 +108,7 @@ void video_creek::CompressionHandler::runCompressor()
       mCompressedFrameIsReadyCallback_();
     }
 
+    equinox::trace("%s", "[CompressionHandler] runCompressor looping...");
   }
 }
 

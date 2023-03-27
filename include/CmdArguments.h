@@ -56,7 +56,8 @@ class CmdArguments
   : mMode_ { kDefaultMode }
   , mPort_ { kDefaultPort }
   , mDstAddress_ { kDefaultDstAddress }
-  , nCompressionRatio_ { kDefaultCompressionRatio }
+  , mCompressionRatio_ { kDefaultCompressionRatio }
+  , mCameraDeviceid_ { 0 }
   {
   }
 
@@ -68,12 +69,15 @@ class CmdArguments
   std::string getDstAddress();
   void setCompressionRatio(int32_t compresRatioToSet);
   int32_t getCompressionRatio();
+  void setCameraDeviceId(int32_t cameraDeviceId);
+  int32_t getCameraDeviceId();
 
  private:
   Mode mMode_;
   int32_t mPort_;
   std::string mDstAddress_;
-  int32_t nCompressionRatio_;
+  int32_t mCompressionRatio_;
+  int32_t mCameraDeviceid_;
 };
 
 } /*namespace video_creek*/

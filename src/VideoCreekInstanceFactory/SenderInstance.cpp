@@ -50,7 +50,7 @@ video_creek::SenderInstance::~SenderInstance()
 
 void video_creek::SenderInstance::newFrameProducedCallback()
 {
-  mNewFrameReceivedFlag_ = true;
+  mNewFrameProducedFlag_ = true;
   mConditionVariableFramesSenderThread_.notify_all();
 }
 
@@ -143,7 +143,7 @@ void video_creek::SenderInstance::runSender()
     equinox::trace("%s", "[SenderInstance] SenderInstance thread is waiting for signal...");
     mConditionVariableFramesSenderThread_.wait(lock, [this]()
     {
-      return ((mNewFrameReceivedFlag_ == true) or (mCompressedFrameIsReadyFlag_ == true) or (mInfoPacketIsSentFlag_ == true) or (mContinueLoop_ == false));
+      return ((mNewFrameProducedFlag_ == true) or (mCompressedFrameIsReadyFlag_ == true) or (mInfoPacketIsSentFlag_ == true) or (mContinueLoop_ == false));
     });
 
     if (mContinueLoop_ == false)
@@ -152,9 +152,9 @@ void video_creek::SenderInstance::runSender()
       break;
     }
 
-    if (mNewFrameReceivedFlag_ == true)
+    if (mNewFrameProducedFlag_ == true)
     {
-      mNewFrameReceivedFlag_ = false;
+      mNewFrameProducedFlag_ = false;
       mCompressionHandler_->compressFrame();
     }
 
