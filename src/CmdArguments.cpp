@@ -93,3 +93,23 @@ int32_t video_creek::CmdArguments::getCameraDeviceId()
 {
   return mCameraDeviceid_;
 }
+
+void video_creek::CmdArguments::setVideoHeight(double height)
+{
+  mVideoHeight_ = height;
+}
+
+double video_creek::CmdArguments::getVideoHeight()
+{
+  return mVideoHeight_;
+}
+
+void video_creek::CmdArguments::setVideoWidth(double width)
+{
+  mVideoWidth_ = width;
+}
+
+double video_creek::CmdArguments::getVideoWidth()
+{
+  return mVideoWidth_;
+}

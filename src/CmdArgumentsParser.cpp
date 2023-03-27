@@ -71,6 +71,7 @@ void video_creek::CmdArgumentsParser::printHelp()
       "\t [--address]   or [-a] server IP address\n"
       "\t [--compress]  or [-c] video compression ratio in [%]\n"
       "\t [--debug]     or [-d] debug logs level\n"
+      "\t [--camera]    or [-v] camera device id\n"
       "\n"
       "\t#Limitations:\n"
       "\t Port range        for [--port]  is: 1 - 65535\n"
@@ -102,6 +103,9 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
   int32_t logLevel = 0;
   int32_t compressRatio = 0;
   int32_t videoDeviceId = 0;
+  int32_t frameWidth = 0;
+  int32_t frameHeight = 0;
+
   char address_parameter[INET_ADDRSTRLEN] = {};
 
   if (argc < MIN_NUMBER_OF_ARGUMENTS) {
@@ -119,11 +123,13 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
       {"compress",  required_argument,  NULL,  'c'},
       {"debug",     required_argument,  NULL,  'd'},
       {"camera",    required_argument,  NULL,  'v'},
+      {"width",     required_argument,  NULL,  'x'},
+      {"height",    required_argument,  NULL,  'y'},
   };
 
   std::cout << std::endl;
 
-  while ((flag = getopt_long(argc, argv, "hsrp:a:c:d:v:", longopts, NULL)) != -1) {
+  while ((flag = getopt_long(argc, argv, "hsrp:a:c:d:v:x:y:", longopts, NULL)) != -1) {
     switch (flag)
     {
       case 's':
@@ -157,6 +163,18 @@ void video_creek::CmdArgumentsParser::parseArgs(int argc, char **argv)
         videoDeviceId = atoi(optarg);
         mCmdArguments_->setCameraDeviceId(videoDeviceId);
         std::cout << "[CmdArgumentsParser] Video device id set to: " << videoDeviceId << std::endl;
+        break;
+
+      case 'x':
+        frameWidth = atoi(optarg);
+        mCmdArguments_->setVideoWidth(frameWidth);
+        std::cout << "[CmdArgumentsParser] Video frame width set to: " << frameWidth << std::endl;
+        break;
+
+      case 'y':
+        frameHeight = atoi(optarg);
+        mCmdArguments_->setVideoHeight(frameHeight);
+        std::cout << "[CmdArgumentsParser] Video frame height set to: " << frameHeight << std::endl;
         break;
 
       case 'd':

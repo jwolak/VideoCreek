@@ -58,6 +58,19 @@ bool video_creek::CameraHandler::openCam()
     return false;
   }
 
+  if (!mVideoCapture_.set(cv::CAP_PROP_FRAME_WIDTH, mCmdArguments_->getVideoWidth()))
+  {
+    equinox::debug("[CameraHandler] Camera frame width: [%d] failed", static_cast<int>(mCmdArguments_->getVideoWidth()));
+  }
+  equinox::debug("[CameraHandler] Camera frame width set: [%d]", static_cast<int>( mVideoCapture_.get(cv::CAP_PROP_FRAME_WIDTH)));
+
+
+  if (!mVideoCapture_.set(cv::CAP_PROP_FRAME_HEIGHT , mCmdArguments_->getVideoHeight()))
+  {
+    equinox::debug("[CameraHandler] Camera frame width: [%d] failed", static_cast<int>(mCmdArguments_->getVideoHeight()));
+  }
+  equinox::debug("[CameraHandler] Camera frame height set: [%d]", static_cast<int>( mVideoCapture_.get(cv::CAP_PROP_FRAME_HEIGHT)));
+
   equinox::trace("[CameraHandler] Open camera device id: [%d] successful", mCmdArguments_->getCameraDeviceId());
   return true;
 }
@@ -127,7 +140,27 @@ void video_creek::CameraHandler::runCamera()
     {
       equinox::trace("%s", "[CameraHandler] New frame request signal received");
       mNewFrameRequestedFlag_ = false;
-      //get frame from cam
+      if (mVideoCapture_.grab())
+      {
+        equinox::trace("%s", "[CameraHandler] New frame grabbed");
+
+        if (mVideoCapture_.retrieve(*mImageBuffer_))
+        {
+          equinox::trace("%s", "[CameraHandler] New frame retrieved");
+          equinox::trace("[CameraHandler] Frame height: [%d]", mImageBuffer_->rows);
+          equinox::trace("[CameraHandler] Frame width: [%d]", mImageBuffer_->cols);
+          mFrameProducedCallback_();
+          equinox::trace("%s", "[CameraHandler] Frame produced callback called");
+        }
+        else
+        {
+          equinox::trace("%s", "[CameraHandler] New frame retrieve failed");
+        }
+      }
+      else
+      {
+        equinox::trace("%s", "[CameraHandler] New frame grab failed");
+      }
     }
 
     equinox::trace("%s", "[CameraHandler] runCamera looping...");
@@ -138,4 +171,5 @@ void video_creek::CameraHandler::requestNewFrame()
 {
   equinox::trace("%s", "[CameraHandler] New frame request received");
   mNewFrameRequestedFlag_ = true;
+  mConditionVariableFramesGrabberThread_.notify_all();
 }
