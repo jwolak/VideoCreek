@@ -40,6 +40,8 @@
 #include "CompressionHandler.h"
 #include "EquinoxLogger.h"
 
+#include <opencv2/imgcodecs.hpp>
+
 video_creek::CompressionHandler::~CompressionHandler()
 {
   if(nullptr != mCompressionHandlerThread_)
@@ -70,8 +72,15 @@ bool video_creek::CompressionHandler::start(std::function<void(void)> compressed
   }
   else
   {
+    equinox::error("%s", "[CompressionHandler] Compressed frame is ready callback is null");
     return false;
   }
+
+  mParametres_.push_back(cv::IMWRITE_JPEG_QUALITY);
+  mParametres_.push_back(mCmdArguments_->getCompressionRatio());
+
+  equinox::trace("[CompressionHandler] Image quality: IMWRITE_JPEG_QUALITY");
+  equinox::trace("[CompressionHandler] Compressed ratio set to: [%d]", mCmdArguments_->getCompressionRatio());
 
   if (nullptr == (mCompressionHandlerThread_ = std::make_shared<std::thread>(&CompressionHandler::runCompressor, this)))
   {
@@ -103,9 +112,16 @@ void video_creek::CompressionHandler::runCompressor()
     if (mNewFrameToCompressFlag_ == true)
     {
       mNewFrameToCompressFlag_ = false;
+      equinox::trace("%s", "[CompressionHandler] New frame to compress signal received...");
 
-      //compress and inform sender thread
+      if (!imencode(".jpg", *mImageBuffer_, *mOutputBuffer_, mParametres_))
+      {
+        equinox::debug("%s", "[CompressionHandler] Compression of frame failed");
+      }
+      equinox::debug("%s", "[CompressionHandler] Compression of frame successful");
+
       mCompressedFrameIsReadyCallback_();
+      equinox::debug("%s", "[CompressionHandler] Compressed frame is ready callback called");
     }
 
     equinox::trace("%s", "[CompressionHandler] runCompressor looping...");
@@ -117,5 +133,4 @@ void video_creek::CompressionHandler::compressFrame()
   equinox::trace("%s", "[CompressionHandler] Compress the new frame requested");
   mNewFrameToCompressFlag_ = true;
   mConditionVariableCompressionHandlerThread_.notify_all();
-
 }

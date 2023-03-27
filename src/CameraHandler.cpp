@@ -42,6 +42,8 @@
 
 video_creek::CameraHandler::~CameraHandler()
 {
+  mVideoCapture_.release();
+
   if(nullptr != mFramesGrabberThread_)
   {
     mFramesGrabberThread_->join();

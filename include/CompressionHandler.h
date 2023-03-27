@@ -46,22 +46,28 @@
 #include <atomic>
 #include <memory>
 #include <functional>
+#include <vector>
 
 #include <opencv2/core/mat.hpp>
+
+#include "CmdArguments.h"
 
 namespace video_creek
 {
 class CompressionHandler
 {
  public:
-  CompressionHandler(std::shared_ptr<cv::Mat> imageBuffer)
-  : imageBuffer_ { imageBuffer } //TODO mutex for buffer?
+  CompressionHandler(std::shared_ptr<cv::Mat> imageBuffer, std::shared_ptr<CmdArguments> cmdArguments_, std::shared_ptr<std::vector<uint8_t>> outputBuffer)
+  : mImageBuffer_ { imageBuffer } //TODO mutex for buffer?
+  , mCmdArguments_ { cmdArguments_ }
+  , mOutputBuffer_ { outputBuffer }
   , mCompressionHandlerThread_ { nullptr }
   , mConditionVariableCompressionHandlerThread_ {}
   , mCompressionHandlerThreadMutex_ {}
   , mNewFrameToCompressFlag_ { false }
   , mCompressedFrameIsReadyCallback_ { nullptr }
   , mContinueLoop_ { true }
+  , mParametres_ { }
   {
   }
 
@@ -72,13 +78,16 @@ class CompressionHandler
   void compressFrame();
 
  private:
-  std::shared_ptr<cv::Mat> imageBuffer_;
+  std::shared_ptr<cv::Mat> mImageBuffer_;
+  std::shared_ptr<CmdArguments> mCmdArguments_;
+  std::shared_ptr<std::vector<uint8_t>> mOutputBuffer_;
   std::shared_ptr<std::thread> mCompressionHandlerThread_;
   std::condition_variable mConditionVariableCompressionHandlerThread_;
   std::mutex mCompressionHandlerThreadMutex_;
   std::atomic<bool> mNewFrameToCompressFlag_;
   std::function<void(void)> mCompressedFrameIsReadyCallback_;
   std::atomic<bool> mContinueLoop_;
+  std::vector<int32_t> mParametres_;
 
   void runCompressor();
 

@@ -54,8 +54,8 @@ namespace video_creek
 class UdpStreamer
 {
  public:
-  UdpStreamer(std::shared_ptr<cv::Mat> imageBuffer)
-  : imageBuffer_ { imageBuffer }
+  UdpStreamer(std::shared_ptr<std::vector<uint8_t>> outputBuffer)
+  : mOutputBuffer_ { outputBuffer }
   , mUdpStreamerThread_ { nullptr }
   , mConditionVariableUdpStreamerThread_ {}
   , mUdpStreamerMutex_ {}
@@ -79,7 +79,7 @@ class UdpStreamer
   void send();
 
  private:
-  std::shared_ptr<cv::Mat> imageBuffer_;
+  std::shared_ptr<std::vector<uint8_t>> mOutputBuffer_;
   std::shared_ptr<std::thread> mUdpStreamerThread_;
   std::condition_variable mConditionVariableUdpStreamerThread_;
   std::mutex mUdpStreamerMutex_;

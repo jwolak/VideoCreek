@@ -155,19 +155,24 @@ void video_creek::SenderInstance::runSender()
     if (mNewFrameProducedFlag_ == true)
     {
       mNewFrameProducedFlag_ = false;
+      equinox::trace("%s", "[SenderInstance] New produced frame signal received...");
+      equinox::trace("%s", "[SenderInstance] Compressing frame...");
       mCompressionHandler_->compressFrame();
     }
 
     if (mCompressedFrameIsReadyFlag_ == true)
     {
       mCompressedFrameIsReadyFlag_ = false;
+      equinox::trace("%s", "[SenderInstance] Ready compressed frame signal received...");
       mUdpStreamer_->send();
     }
 
     if (mInfoPacketIsSentFlag_ == true)
     {
       mInfoPacketIsSentFlag_ == false;
+      equinox::trace("%s", "[SenderInstance] Packet is sent signal received...");
       mCameraHandler_->requestNewFrame();
+      equinox::trace("%s", "[SenderInstance] New frame request...");
     }
 
   }
