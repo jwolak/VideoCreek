@@ -106,6 +106,13 @@ bool video_creek::SenderInstance::start()
   }
   equinox::trace("%s", "[SenderInstance] Start CameraHandler successful");
 
+  if (!mNetworkHandler_->start())
+  {
+    equinox::error("%s", "[SenderInstance] Start Network Handler failed");
+    return false;
+  }
+  equinox::error("%s", "[SenderInstance] Start Network Handler successful");
+
   if(!mUdpStreamer_->start(std::bind(&video_creek::SenderInstance::compressedFrameIsSentInfoCallback, this)))
   {
     equinox::error("%s", "[SenderInstance] Setup UDP streamer failed");

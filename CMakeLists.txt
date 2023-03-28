@@ -72,6 +72,7 @@ set(VIDEO_CREEK_SRC
     ${VIDEO_CREEK_SRC_DIR}/CameraHandler.cpp
     ${VIDEO_CREEK_SRC_DIR}/CompressionHandler.cpp
     ${VIDEO_CREEK_SRC_DIR}/UdpStreamer.cpp
+    ${VIDEO_CREEK_SRC_DIR}/NetworkHandler.cpp
 )
 
 #------------------------------------------------------------------------------------------

@@ -55,6 +55,7 @@
 #include "CompressionHandler.h"
 #include "UdpStreamer.h"
 #include "CmdArguments.h"
+#include "NetworkHandler.h"
 
 namespace video_creek
 {
@@ -69,6 +70,7 @@ class SenderInstance : public IVideoCreekInstance
   , mEncodedVideoBuffer_ {}
   , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_, mCmdArguments_) }
   , mCompressionHandler_ { std::make_shared<CompressionHandler>(mImageBuffer_, mCmdArguments_, mOutputBuffer_) }
+  , mNetworkHandler_ { std::make_shared<NetworkHandler>(mCmdArguments_, mOutputBuffer_) }
   , mUdpStreamer_ { std::make_shared<UdpStreamer>(mOutputBuffer_) }
   , mFrameSenderThread_ { nullptr }
   , mConditionVariableFramesSenderThread_ {}
@@ -96,6 +98,7 @@ class SenderInstance : public IVideoCreekInstance
   std::vector<uint8_t> mEncodedVideoBuffer_;
   std::shared_ptr<CameraHandler> mCameraHandler_;
   std::shared_ptr<CompressionHandler> mCompressionHandler_;
+  std::shared_ptr<NetworkHandler> mNetworkHandler_;
   std::shared_ptr<UdpStreamer> mUdpStreamer_;
   std::shared_ptr<std::thread> mFrameSenderThread_;
   std::condition_variable mConditionVariableFramesSenderThread_;
