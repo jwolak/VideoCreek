@@ -56,6 +56,7 @@ const int32_t kDefaultCompressionRatio = 80; /*[%]*/
 const int32_t kDefaultCameraDeviceId = 0;
 const double kDefaultHeight = 480;
 const double kDefaultWidth = 640;
+const std::string kDefaultBindAddress = std::string("0.0.0.0");
 
 } /*namespace video_creek*/
 

@@ -71,7 +71,7 @@ class SenderInstance : public IVideoCreekInstance
   , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_, mCmdArguments_) }
   , mCompressionHandler_ { std::make_shared<CompressionHandler>(mImageBuffer_, mCmdArguments_, mOutputBuffer_) }
   , mNetworkHandler_ { std::make_shared<NetworkHandler>(mCmdArguments_, mOutputBuffer_) }
-  , mUdpStreamer_ { std::make_shared<UdpStreamer>(mOutputBuffer_) }
+  , mUdpStreamer_ { std::make_shared<UdpStreamer>(mNetworkHandler_) }
   , mFrameSenderThread_ { nullptr }
   , mConditionVariableFramesSenderThread_ {}
   , mFramesSenderThreadMutex_ {}

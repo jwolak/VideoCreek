@@ -44,12 +44,14 @@
 
 #include "NetworkHandler.h"
 #include "EquinoxLogger.h"
+#include "VideoCreekCommon.h"
 
 video_creek::NetworkHandler::~NetworkHandler()
 {
   if (mSocket_ > 0)
   {
     close(mSocket_);
+    equinox::debug("%s", "[NetworkHandler] Socket close successful");
   }
 }
 
@@ -64,9 +66,9 @@ bool video_creek::NetworkHandler::start()
   equinox::trace("%s", "[NetworkHandler] Open socket successful");
 
   memset((char*)&mBindAddr_, 0, sizeof(mBindAddr_));
-  if ( 1 != (inet_pton(AF_INET, (char*)"0", &(mBindAddr_.sin_addr))))
+  if ( 1 != (inet_pton(AF_INET, static_cast<const char*>(kDefaultBindAddress.c_str()), &(mBindAddr_.sin_addr))))
   {
-    equinox::error("%s", "[NetworkHandler] Bind address conversion of IPv4 and IPv6 addresses from text to binary form failed");
+    equinox::error("%s", "[NetworkHandler] Bind address conversion of IP address from text to binary form failed");
     return false;
   }
   equinox::trace("%s", "[NetworkHandler] Conversion of IPv4 and IPv6 addresses from text to binary form successful");
@@ -78,9 +80,10 @@ bool video_creek::NetworkHandler::start()
   {
     equinox::error("%s", "[NetworkHandler] Bind failed");
     close(mSocket_);
+    equinox::debug("%s", "[NetworkHandler] Socket closed");
     return false;
   }
-  equinox::error("%s", "[NetworkHandler] Bind successful");
+  equinox::trace("%s", "[NetworkHandler] Bind successful");
 
   memset((char*)&mDestAddr_, 0, sizeof(mDestAddr_));
   memset((char*)&mRecentSenderAddr_, 0, sizeof(mRecentSenderAddr_));
@@ -94,13 +97,19 @@ bool video_creek::NetworkHandler::start()
     equinox::error("%s", "[NetworkHandler] Destination address conversion of IPv4 and IPv6 addresses from text to binary form failed");
     return false;
   }
-  equinox::error("%s", "[NetworkHandler] Destination address conversion of IPv4 and IPv6 addresses from text to binary form successful");
+  equinox::error("%s", "[NetworkHandler] Destination address conversion of IP address from text to binary form successful");
 
-  equinox::error("%s", "[NetworkHandler] Start successful");
+  equinox::trace("%s", "[NetworkHandler] Start successful");
   return true;
 }
 
 void video_creek::NetworkHandler::send()
 {
+  if ( 0 < (sendto(mSocket_, static_cast<uint8_t*>(&mOutputBuffer_->operator [](0)), mOutputBuffer_->size(), 0, (sockaddr*)&mDestAddr_, sizeof(mDestAddr_))))
+  {
+    equinox::error("%s", "[NetworkHandler] Send frame failed");
+    return;
+  }
 
+  equinox::error("%s", "[NetworkHandler] Send frame successful");
 }

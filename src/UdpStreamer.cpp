@@ -171,7 +171,9 @@ void video_creek::UdpStreamer::runSender()
     if (mRequestSendFrameFlag_ == true)
     {
       mRequestSendFrameFlag_ = false;
-      //send frame and inform main thread
+      equinox::trace("%s", "[UdpStreamer] Network handler is being sending the frame...");
+      mNetworkHandler_->send();
+      equinox::trace("%s", "[UdpStreamer] Network handler sent the frame");
       mNewFreameSentFlag_ = true;
       mConditionVariableUdpStreamerThread_.notify_all();
     }
@@ -200,12 +202,15 @@ void video_creek::UdpStreamer::runUdpStreamer()
     {
       mNewCompressFrameToBeSentFlag_ = false;
       mRequestSendFrameFlag_ = true;
+      mConditionVariableSenderThread_.notify_all();
     }
 
     if (mNewFreameSentFlag_ == true)
     {
       mNewFreameSentFlag_ = false;
+      equinox::trace("%s", "[UdpStreamer] Frame is sent signal received...");
       mCompressedFrameIsSentInfoCallback_();
+      equinox::trace("%s", "[UdpStreamer] Compressed frame is sent callback called");
     }
 
     if (mNewFreameReceivedFlag_ == true)
