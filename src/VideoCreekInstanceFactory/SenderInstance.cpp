@@ -176,7 +176,7 @@ void video_creek::SenderInstance::runSender()
 
     if (mInfoPacketIsSentFlag_ == true)
     {
-      mInfoPacketIsSentFlag_ == false;
+      mInfoPacketIsSentFlag_ = false;
       equinox::trace("%s", "[SenderInstance] Packet is sent signal received...");
       mCameraHandler_->requestNewFrame();
       equinox::trace("%s", "[SenderInstance] New frame request...");
