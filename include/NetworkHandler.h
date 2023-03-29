@@ -46,6 +46,7 @@
 
 #include <memory>
 #include <vector>
+#include <mutex>
 
 #include "CmdArguments.h"
 
@@ -54,9 +55,11 @@ namespace video_creek
 class NetworkHandler
 {
  public:
-  NetworkHandler(std::shared_ptr<CmdArguments> cmdArguments, std::shared_ptr<std::vector<uint8_t>> outputBuffer)
+  NetworkHandler(std::shared_ptr<CmdArguments> cmdArguments, std::shared_ptr<std::vector<uint8_t>> outputBuffer,
+                 std::shared_ptr<std::mutex> bufferLockMutex)
   : mCmdArguments_ { cmdArguments }
   , mOutputBuffer_ { outputBuffer }
+  , mBufferLockMutex_ { bufferLockMutex }
   , mSocket_ { -1 }
   , mDestAddr_ {}
   , mBindAddr_ {}
@@ -73,6 +76,7 @@ class NetworkHandler
  private:
   std::shared_ptr<CmdArguments> mCmdArguments_;
   std::shared_ptr<std::vector<uint8_t>> mOutputBuffer_;
+  std::shared_ptr<std::mutex> mBufferLockMutex_;
   int32_t mSocket_;
   sockaddr_in mDestAddr_;
   sockaddr_in mBindAddr_;

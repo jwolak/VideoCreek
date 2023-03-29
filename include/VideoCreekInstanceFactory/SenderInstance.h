@@ -63,14 +63,14 @@ class SenderInstance : public IVideoCreekInstance
 {
  public:
   SenderInstance(std::shared_ptr<CmdArguments> cmdArguments)
-  : mImageBufferLockMutex_ {}
+  : mBufferLockMutex_ { std::make_shared<std::mutex>() }
   , mCmdArguments_ { cmdArguments }
   , mImageBuffer_ { std::make_shared<cv::Mat>() }
   , mOutputBuffer_ { std::make_shared<std::vector<uint8_t>>() }
   , mEncodedVideoBuffer_ {}
-  , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_, mCmdArguments_) }
-  , mCompressionHandler_ { std::make_shared<CompressionHandler>(mImageBuffer_, mCmdArguments_, mOutputBuffer_) }
-  , mNetworkHandler_ { std::make_shared<NetworkHandler>(mCmdArguments_, mOutputBuffer_) }
+  , mCameraHandler_ { std::make_shared<CameraHandler>(mImageBuffer_, mCmdArguments_, mBufferLockMutex_) }
+  , mCompressionHandler_ { std::make_shared<CompressionHandler>(mImageBuffer_, mCmdArguments_, mOutputBuffer_, mBufferLockMutex_) }
+  , mNetworkHandler_ { std::make_shared<NetworkHandler>(mCmdArguments_, mOutputBuffer_, mBufferLockMutex_) }
   , mUdpStreamer_ { std::make_shared<UdpStreamer>(mNetworkHandler_) }
   , mFrameSenderThread_ { nullptr }
   , mConditionVariableFramesSenderThread_ {}
@@ -91,9 +91,9 @@ class SenderInstance : public IVideoCreekInstance
   void compressedFrameIsSentInfoCallback();
 
  private:
-  mutable std::shared_mutex mImageBufferLockMutex_; // TODO useless
+  mutable std::shared_ptr<std::mutex> mBufferLockMutex_;
   std::shared_ptr<CmdArguments> mCmdArguments_;
-  std::shared_ptr<cv::Mat> mImageBuffer_; /* TODO Create as class with thread sychro */
+  std::shared_ptr<cv::Mat> mImageBuffer_;
   std::shared_ptr<std::vector<uint8_t>> mOutputBuffer_;
   std::vector<uint8_t> mEncodedVideoBuffer_;
   std::shared_ptr<CameraHandler> mCameraHandler_;

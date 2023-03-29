@@ -57,9 +57,10 @@ namespace video_creek
 class CameraHandler
 {
  public:
-  CameraHandler(std::shared_ptr<cv::Mat> imageBuffer, std::shared_ptr<CmdArguments> cmdArguments)
+  CameraHandler(std::shared_ptr<cv::Mat> imageBuffer, std::shared_ptr<CmdArguments> cmdArguments, std::shared_ptr<std::mutex> bufferLockMutex)
   : mImageBuffer_ { imageBuffer }
   , mCmdArguments_ { cmdArguments }
+  , mBufferLockMutex_ { bufferLockMutex }
   , mFramesGrabberThread_ {}
   , mConditionVariableFramesGrabberThread_{}
   , mFramesGrabberThreadMutex_ {}
@@ -80,6 +81,7 @@ class CameraHandler
  private:
   std::shared_ptr<cv::Mat> mImageBuffer_;
   std::shared_ptr<CmdArguments> mCmdArguments_;
+  mutable std::shared_ptr<std::mutex> mBufferLockMutex_;
   std::shared_ptr<std::thread> mFramesGrabberThread_;
   std::condition_variable mConditionVariableFramesGrabberThread_;
   std::mutex mFramesGrabberThreadMutex_;

@@ -114,6 +114,7 @@ void video_creek::CompressionHandler::runCompressor()
       mNewFrameToCompressFlag_ = false;
       equinox::trace("%s", "[CompressionHandler] New frame to compress signal received...");
 
+      std::lock_guard<std::mutex> guard(*mBufferLockMutex_);
       if (!imencode(".jpg", *mImageBuffer_, *mOutputBuffer_, mParametres_))
       {
         equinox::debug("%s", "[CompressionHandler] Compression of frame failed");

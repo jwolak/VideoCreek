@@ -57,10 +57,12 @@ namespace video_creek
 class CompressionHandler
 {
  public:
-  CompressionHandler(std::shared_ptr<cv::Mat> imageBuffer, std::shared_ptr<CmdArguments> cmdArguments_, std::shared_ptr<std::vector<uint8_t>> outputBuffer)
+  CompressionHandler(std::shared_ptr<cv::Mat> imageBuffer, std::shared_ptr<CmdArguments> cmdArguments_, std::shared_ptr<std::vector<uint8_t>> outputBuffer,
+                     std::shared_ptr<std::mutex> bufferLockMutex)
   : mImageBuffer_ { imageBuffer } //TODO mutex for buffer?
   , mCmdArguments_ { cmdArguments_ }
   , mOutputBuffer_ { outputBuffer }
+  , mBufferLockMutex_ { bufferLockMutex }
   , mCompressionHandlerThread_ { nullptr }
   , mConditionVariableCompressionHandlerThread_ {}
   , mCompressionHandlerThreadMutex_ {}
@@ -81,6 +83,7 @@ class CompressionHandler
   std::shared_ptr<cv::Mat> mImageBuffer_;
   std::shared_ptr<CmdArguments> mCmdArguments_;
   std::shared_ptr<std::vector<uint8_t>> mOutputBuffer_;
+  std::shared_ptr<std::mutex> mBufferLockMutex_;
   std::shared_ptr<std::thread> mCompressionHandlerThread_;
   std::condition_variable mConditionVariableCompressionHandlerThread_;
   std::mutex mCompressionHandlerThreadMutex_;

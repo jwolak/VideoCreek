@@ -146,6 +146,7 @@ void video_creek::CameraHandler::runCamera()
       {
         equinox::trace("%s", "[CameraHandler] New frame grabbed");
 
+        std::lock_guard<std::mutex> guard(*mBufferLockMutex_);
         if (mVideoCapture_.retrieve(*mImageBuffer_))
         {
           equinox::trace("%s", "[CameraHandler] New frame retrieved");

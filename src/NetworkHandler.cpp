@@ -105,6 +105,8 @@ bool video_creek::NetworkHandler::start()
 
 void video_creek::NetworkHandler::send()
 {
+  std::lock_guard<std::mutex> guard(*mBufferLockMutex_);
+
   if ( 0 < (sendto(mSocket_, static_cast<uint8_t*>(&mOutputBuffer_->operator [](0)), mOutputBuffer_->size(), 0, (sockaddr*)&mDestAddr_, sizeof(mDestAddr_))))
   {
     equinox::error("%s", "[NetworkHandler] Send frame failed");

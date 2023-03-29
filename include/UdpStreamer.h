@@ -87,7 +87,6 @@ class UdpStreamer
   std::mutex mUdpStreamerMutex_;
   std::atomic<bool> mNewCompressFrameToBeSentFlag_;
   std::function<void(void)> mCompressedFrameIsSentInfoCallback_;
-
   std::shared_ptr<std::thread> mReceiverThread_;
   std::shared_ptr<std::thread> mSenderThread_;
   std::atomic<bool> mNewFreameReceivedFlag_;
